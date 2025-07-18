@@ -58,7 +58,9 @@ if uploaded_files:
                         "If the item looks designer-signed, branded, or handmade, price it on the higher end. If it looks like generic costume jewelry, price it on the lower end. "
                         "If it's a known collectible brand, mention that too. Format the price range clearly in this format: '$XX to $XX USD'. "
                         "Make sure there are spaces between the dollar signs and the numbers, and do not merge them. Do not write values like '30to100' — write them as '$30 to $100 USD'. "
-                        "Use numerals only (no words like 'twenty') and always include the currency abbreviation 'USD'. If you mention a price range, use the correct formatting syntax with spacing."
+                        "Use numerals only (no words like 'twenty') and always include the currency abbreviation 'USD'. If you mention a price range, use the correct formatting syntax with spacing. "
+                        "Always output the full report using this exact structure with headers: \n\n"
+                        "**Style and Era**\n\n[Your output here]\n\n**Materials**\n\n[Your output here]\n\n**Estimated Resale Price**\n\n[Your output here including the price range like '$30 to $100 USD']"
                     )
                 },
                 *image_inputs
@@ -90,7 +92,7 @@ if uploaded_files:
 
         st.markdown("---")
         st.subheader("📋 Jewelry Bestie's Report")
-        st.write(result)
+        st.markdown(result)
 
     except Exception as e:
         st.error(f"An error occurred: {str(e)}")
