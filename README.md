@@ -1,2 +1,2 @@
 # jewelrybestie
-resellers
+
