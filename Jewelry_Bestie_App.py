@@ -52,13 +52,24 @@ if uploaded_files:
                         "Choose from: earrings, ring, bracelet, brooch, pendant, necklace. "
                         "If any item has a pin or clasp on the back, it's likely a brooch. "
                         "If there are two identical items, it may be earrings. Use all the images to make one identification. "
-                        "Also describe the style, era, and estimated resale price. "
+                        "Also describe the style, era, materials, and estimated resale price. "
                         "Provide the resale price in USD as a realistic range based on sold comps from eBay or Etsy within the last year. "
                         "Assume the item is in good, wearable condition. Factor in design, craftsmanship, and materials such as silver-tone vs sterling. "
                         "If the item looks designer-signed, branded, or handmade, price it on the higher end. If it looks like generic costume jewelry, price it on the lower end. "
                         "If it's a known collectible brand, mention that too. Format the price range using this exact format: \"$XX to $XX USD\" — always with a space before and after 'to', a dollar sign before both numbers, and 'USD' at the end. Do NOT merge the numbers (e.g., NEVER write '30to100' or '$30to$100'). Always include both dollar signs and always use numerals (e.g., '$25 to $75 USD', NOT 'twenty-five to seventy-five'). This format is REQUIRED."
-                        "Always output the full report using this exact structure with headers: \n\n"
-                        "**Style and Era**\n\n[Your output here]\n\n**Materials**\n\n[Your output here]\n\n**Estimated Resale Price**\n\n[Your output here including the price range like '$30 to $100 USD']"
+                        "Always output the full report using this exact structure with markdown headers and labels:
+
+"
+                        "## 📋 Jewelry Bestie's Report\n"
+                        "\n"
+                        "### Style and Era\n"
+                        "Style: [describe style]\n\n"
+                        "Era: [describe era]\n\n"
+                        "### Materials\n"
+                        "Material: [describe materials]\n\n"
+                        "### Estimated Resale Price\n"
+                        "Price Range: $XX to $XX USD\n\n"
+                        "If it's from a collectible brand, branded, or sterling, note that it may sell for more."
                     )
                 },
                 *image_inputs
