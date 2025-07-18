@@ -56,9 +56,7 @@ if uploaded_files:
                         "Provide the resale price in USD as a realistic range based on sold comps from eBay or Etsy within the last year. "
                         "Assume the item is in good, wearable condition. Factor in design, craftsmanship, and materials such as silver-tone vs sterling. "
                         "If the item looks designer-signed, branded, or handmade, price it on the higher end. If it looks like generic costume jewelry, price it on the lower end. "
-                        "If it's a known collectible brand, mention that too. Format the price range clearly in this format: '$XX to $XX USD'. "
-                        "Make sure there are spaces between the dollar signs and the numbers, and do not merge them. Do not write values like '30to100' — write them as '$30 to $100 USD'. "
-                        "Use numerals only (no words like 'twenty') and always include the currency abbreviation 'USD'. If you mention a price range, use the correct formatting syntax with spacing. "
+                        "If it's a known collectible brand, mention that too. Format the price range using this exact format: \"$XX to $XX USD\" — always with a space before and after 'to', a dollar sign before both numbers, and 'USD' at the end. Do NOT merge the numbers (e.g., NEVER write '30to100' or '$30to$100'). Always include both dollar signs and always use numerals (e.g., '$25 to $75 USD', NOT 'twenty-five to seventy-five'). This format is REQUIRED."
                         "Always output the full report using this exact structure with headers: \n\n"
                         "**Style and Era**\n\n[Your output here]\n\n**Materials**\n\n[Your output here]\n\n**Estimated Resale Price**\n\n[Your output here including the price range like '$30 to $100 USD']"
                     )
@@ -70,13 +68,14 @@ if uploaded_files:
 
     # Function to fix bad price formatting
     def fix_price_formatting(text):
-        # Fix patterns like 15to30 or 15 to30 or 15to 30 or 15 to 30
-        pattern = re.compile(r'(?<!\$)\b(\d{1,3})\s*to\s*(\d{1,3})\b(?!\s*USD)')
-        text = pattern.sub(r'$\1 to $\2 USD', text)
+        pattern1 = re.compile(r'\b(\d{1,3})\s*to\s*(\d{1,3})\b(?!\s*USD)', re.IGNORECASE)
+        text = pattern1.sub(r'$\1 to $\2 USD', text)
 
-        # Fix patterns like 15to30USD or 15to30 usd
-        pattern_compact = re.compile(r'(?<!\$)\b(\d{1,3})to(\d{1,3})\s*(usd|USD)\b')
-        text = pattern_compact.sub(r'$\1 to $\2 USD', text)
+        pattern2 = re.compile(r'\b(\d{1,3})to(\d{1,3})\s*(usd|USD)\b', re.IGNORECASE)
+        text = pattern2.sub(r'$\1 to $\2 USD', text)
+
+        pattern3 = re.compile(r'\$(\d{1,3})\s*to\s*\$?(\d{1,3})\b(?!\s*USD)', re.IGNORECASE)
+        text = pattern3.sub(r'$\1 to $\2 USD', text)
 
         return text
 
