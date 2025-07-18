@@ -58,7 +58,7 @@ if uploaded_files:
                         "If the item looks designer-signed, branded, or handmade, price it on the higher end. If it looks like generic costume jewelry, price it on the lower end. "
                         "If it's a known collectible brand, mention that too. Format the price range using this exact format: \"$XX to $XX USD\" — always with a space before and after 'to', a dollar sign before both numbers, and 'USD' at the end. Do NOT merge the numbers (e.g., NEVER write '30to100' or '$30to$100'). Always include both dollar signs and always use numerals (e.g., '$25 to $75 USD', NOT 'twenty-five to seventy-five'). This format is REQUIRED. "
                         "Always output the full report using this exact structure with markdown headers and labels:\n\n"
-                        "## 📋 Jewelry Bestie's Report\n\n"
+                        "## Jewelry Bestie's Report\n\n"
                         "### Style and Era\n"
                         "Style: [describe style]\n\n"
                         "Era: [describe era]\n\n"
@@ -76,18 +76,9 @@ if uploaded_files:
 
     # Function to fix bad price formatting
     def fix_price_formatting(text):
-        pattern1 = re.compile(r'\b(\d{1,3})\s*to\s*(\d{1,3})\b(?!\s*USD)', re.IGNORECASE)
-        text = pattern1.sub(r'$\1 to $\2 USD', text)
-
-        pattern2 = re.compile(r'\b(\d{1,3})to(\d{1,3})\s*(usd|USD)\b', re.IGNORECASE)
-        text = pattern2.sub(r'$\1 to $\2 USD', text)
-
-        pattern3 = re.compile(r'\$(\d{1,3})\s*to\s*\$?(\d{1,3})\b(?!\s*USD)', re.IGNORECASE)
-        text = pattern3.sub(r'$\1 to $\2 USD', text)
-
-        pattern4 = re.compile(r'(?<!\$)(\d{1,3})to(\d{1,3})(?!\s*USD)', re.IGNORECASE)
-        text = pattern4.sub(r'$\1 to $\2 USD', text)
-
+        text = re.sub(r'(?<!\$)(\d{1,4})\s*to\s*(\d{1,4})(?!\s*USD)', r'$\1 to $\2 USD', text)
+        text = re.sub(r'(?<!\$)(\d{1,4})to(\d{1,4})(?!\s*USD)', r'$\1 to $\2 USD', text)
+        text = re.sub(r'\$(\d{1,4})\s*to\s*\$?(\d{1,4})(?!\s*USD)', r'$\1 to $\2 USD', text)
         return text
 
     try:
@@ -101,7 +92,6 @@ if uploaded_files:
         result = fix_price_formatting(result)  # Fix price formatting before display
 
         st.markdown("---")
-        st.subheader("📋 Jewelry Bestie's Report")
         st.markdown(result)
 
     except Exception as e:
