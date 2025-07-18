@@ -30,7 +30,7 @@ if uploaded_files:
         images_base64.append(img_b64)
 
     st.markdown("---")
-    st.write("😨 Analyzing your jewelry pieces with AI magic...")
+    st.write("Analyzing your jewelry pieces with AI magic...")
 
     # Build content block for each image
     image_inputs = [
