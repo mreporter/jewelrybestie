@@ -4,6 +4,7 @@ import base64
 from PIL import Image
 import io
 import os
+import re
 
 # Use the OpenAI API key from Streamlit secrets
 openai.api_key = st.secrets["OPENAI_API_KEY"]
@@ -57,13 +58,25 @@ if uploaded_files:
                         "If the item looks designer-signed, branded, or handmade, price it on the higher end. If it looks like generic costume jewelry, price it on the lower end. "
                         "If it's a known collectible brand, mention that too. Format the price range clearly in this format: '$XX to $XX USD'. "
                         "Make sure there are spaces between the dollar signs and the numbers, and do not merge them. Do not write values like '30to100' — write them as '$30 to $100 USD'. "
-                        "Use numerals only (no words like 'twenty') and always include the currency abbreviation 'USD'."
+                        "Use numerals only (no words like 'twenty') and always include the currency abbreviation 'USD'. If you mention a price range, use the correct formatting syntax with spacing."
                     )
                 },
                 *image_inputs
             ]
         }
     ]
+
+    # Function to fix bad price formatting
+    def fix_price_formatting(text):
+        # Fix patterns like 15to30 or 15 to30 or 15to 30 or 15 to 30
+        pattern = re.compile(r'(?<!\$)\b(\d{1,3})\s*to\s*(\d{1,3})\b(?!\s*USD)')
+        text = pattern.sub(r'$\1 to $\2 USD', text)
+
+        # Fix patterns like 15to30USD or 15to30 usd
+        pattern_compact = re.compile(r'(?<!\$)\b(\d{1,3})to(\d{1,3})\s*(usd|USD)\b')
+        text = pattern_compact.sub(r'$\1 to $\2 USD', text)
+
+        return text
 
     try:
         response = openai.chat.completions.create(
@@ -73,6 +86,8 @@ if uploaded_files:
         )
 
         result = response.choices[0].message.content
+        result = fix_price_formatting(result)  # Fix price formatting before display
+
         st.markdown("---")
         st.subheader("📋 Jewelry Bestie's Report")
         st.write(result)
