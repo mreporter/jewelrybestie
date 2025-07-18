@@ -77,6 +77,9 @@ if uploaded_files:
         pattern3 = re.compile(r'\$(\d{1,3})\s*to\s*\$?(\d{1,3})\b(?!\s*USD)', re.IGNORECASE)
         text = pattern3.sub(r'$\1 to $\2 USD', text)
 
+        pattern4 = re.compile(r'(?<!\$)(\d{1,3})to(\d{1,3})(?!\s*USD)', re.IGNORECASE)
+        text = pattern4.sub(r'$\1 to $\2 USD', text)
+
         return text
 
     try:
