@@ -60,7 +60,7 @@ if uploaded_files:
     ]
 
     response = openai.chat.completions.create(
-        model="gpt-4-vision-preview",
+        model="gpt-40",
         messages=messages,
         max_tokens=700
     )
