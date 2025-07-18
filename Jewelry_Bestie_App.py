@@ -56,12 +56,9 @@ if uploaded_files:
                         "Provide the resale price in USD as a realistic range based on sold comps from eBay or Etsy within the last year. "
                         "Assume the item is in good, wearable condition. Factor in design, craftsmanship, and materials such as silver-tone vs sterling. "
                         "If the item looks designer-signed, branded, or handmade, price it on the higher end. If it looks like generic costume jewelry, price it on the lower end. "
-                        "If it's a known collectible brand, mention that too. Format the price range using this exact format: \"$XX to $XX USD\" — always with a space before and after 'to', a dollar sign before both numbers, and 'USD' at the end. Do NOT merge the numbers (e.g., NEVER write '30to100' or '$30to$100'). Always include both dollar signs and always use numerals (e.g., '$25 to $75 USD', NOT 'twenty-five to seventy-five'). This format is REQUIRED."
-                        "Always output the full report using this exact structure with markdown headers and labels:
-
-"
-                        "## 📋 Jewelry Bestie's Report\n"
-                        "\n"
+                        "If it's a known collectible brand, mention that too. Format the price range using this exact format: \"$XX to $XX USD\" — always with a space before and after 'to', a dollar sign before both numbers, and 'USD' at the end. Do NOT merge the numbers (e.g., NEVER write '30to100' or '$30to$100'). Always include both dollar signs and always use numerals (e.g., '$25 to $75 USD', NOT 'twenty-five to seventy-five'). This format is REQUIRED. "
+                        "Always output the full report using this exact structure with markdown headers and labels:\n\n"
+                        "## 📋 Jewelry Bestie's Report\n\n"
                         "### Style and Era\n"
                         "Style: [describe style]\n\n"
                         "Era: [describe era]\n\n"
