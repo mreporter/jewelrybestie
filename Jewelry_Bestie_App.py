@@ -51,7 +51,13 @@ if uploaded_files:
                         "Choose from: earrings, ring, bracelet, brooch, pendant, necklace. "
                         "If any item has a pin or clasp on the back, it's likely a brooch. "
                         "If there are two identical items, it may be earrings. Use all the images to make one identification. "
-                        "Also describe the style, era, and estimated resale price."
+                        "Also describe the style, era, and estimated resale price. "
+                        "Provide the resale price in USD as a realistic range based on sold comps from eBay or Etsy within the last year. "
+                        "Assume the item is in good, wearable condition. Factor in design, craftsmanship, and materials such as silver-tone vs sterling. "
+                        "If the item looks designer-signed, branded, or handmade, price it on the higher end. If it looks like generic costume jewelry, price it on the lower end. "
+                        "If it's a known collectible brand, mention that too. Format the price range clearly in this format: '$XX to $XX USD'. "
+                        "Make sure there are spaces between the dollar signs and the numbers, and do not merge them. Do not write values like '30to100' — write them as '$30 to $100 USD'. "
+                        "Use numerals only (no words like 'twenty') and always include the currency abbreviation 'USD'."
                     )
                 },
                 *image_inputs
