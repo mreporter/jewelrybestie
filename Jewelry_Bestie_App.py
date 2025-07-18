@@ -29,7 +29,7 @@ if uploaded_files:
         images_base64.append(img_b64)
 
     st.markdown("---")
-    st.write("🧠 Analyzing your jewelry pieces with AI magic...")
+    st.write("😨 Analyzing your jewelry pieces with AI magic...")
 
     # Build content block for each image
     image_inputs = [
@@ -59,17 +59,20 @@ if uploaded_files:
         }
     ]
 
-    response = openai.chat.completions.create(
-        model="gpt-40",
-        messages=messages,
-        max_tokens=700
-    )
+    try:
+        response = openai.chat.completions.create(
+            model="gpt-4o",
+            messages=messages,
+            max_tokens=700
+        )
 
-    result = response.choices[0].message.content
-    st.markdown("---")
-    st.subheader("📋 Jewelry Bestie's Report")
-    st.write(result)
+        result = response.choices[0].message.content
+        st.markdown("---")
+        st.subheader("📋 Jewelry Bestie's Report")
+        st.write(result)
+
+    except Exception as e:
+        st.error(f"An error occurred: {str(e)}")
 
 else:
     st.info("Upload one or more photos above to get started!")
-
