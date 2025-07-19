@@ -15,7 +15,7 @@ st.markdown("""
     <style>
     h3 {
         font-family: 'Georgia', serif;
-        font-size: 1.4rem;
+        font-size: 1.2rem;
         color: #333;
     }
     .reportview-container .markdown-text-container {
@@ -96,7 +96,7 @@ if uploaded_files:
                         "Estimated Resale Price: [e.g., $25 to $40 USD — based on sales trends on eBay, Etsy, and Ruby Lane]\n\n"
                         f"{type_note}\n"
                         f"Additional Notes from User: {user_notes}\n\n"
-                        "Ensure your language is rich, confident, and filled with expertise. Include historical references when applicable. If unsure, explain what limits your confidence. Output in plain text only and do not use asterisks or markdown formatting."
+                        "Ensure your language is rich, confident, and filled with expertise. Include historical references when applicable. If unsure, explain what limits your confidence. Output in plain text only without markdown, formatting symbols, or asterisks."
                     )
                 },
                 *image_inputs
@@ -117,15 +117,15 @@ if uploaded_files:
         output = []
         for line in lines:
             if line.lower().startswith("type:"):
-                output.append(f"### {line.strip()}")
+                output.append(f"#### {line.strip()}")
             elif line.lower().startswith("style and era:"):
-                output.append(f"### {line.strip()}")
+                output.append(f"#### {line.strip()}")
             elif line.lower().startswith("materials:"):
-                output.append(f"### {line.strip()}")
+                output.append(f"#### {line.strip()}")
             elif line.lower().startswith("details:"):
-                output.append(f"### Details")
+                output.append(f"#### Details")
             elif line.lower().startswith("estimated resale price:"):
-                output.append(f"### {line.strip()}")
+                output.append(f"#### {line.strip()}")
             elif line.strip() == "":
                 output.append("")
             else:
