@@ -11,6 +11,21 @@ from datetime import datetime
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 st.set_page_config(page_title="Jewelry Bestie", page_icon="💎")
+st.markdown("""
+    <style>
+    .reportview-container .markdown-text-container h3 {
+        font-family: 'Georgia', serif;
+        font-size: 1.4rem;
+        color: #333;
+    }
+    .reportview-container .markdown-text-container {
+        font-family: 'Arial', sans-serif;
+        font-size: 1rem;
+        color: #444;
+    }
+    </style>
+    "", unsafe_allow_html=True)
+
 st.title("💎 Jewelry Bestie")
 st.write("Your AI-powered best friend for identifying, pricing, and describing jewelry.")
 
