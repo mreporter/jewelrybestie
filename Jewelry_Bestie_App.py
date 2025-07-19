@@ -5,9 +5,18 @@ from PIL import Image
 import io
 import os
 import re
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+from datetime import datetime
 
 # Use the OpenAI API key from Streamlit secrets
 openai.api_key = st.secrets["OPENAI_API_KEY"]
+
+# Set up Google Sheets credentials
+scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+credentials = ServiceAccountCredentials.from_json_keyfile_dict(st.secrets["gcp_service_account"], scope)
+client = gspread.authorize(credentials)
+sheet = client.open("JewelryBestieReports").sheet1
 
 st.set_page_config(page_title="Jewelry Bestie", page_icon="💎")
 st.title("💎 Jewelry Bestie")
@@ -82,21 +91,19 @@ if uploaded_files:
         st.text(result)
 
         st.download_button(
-            label="💾 Download Report",
+            label="📀 Download Report",
             data=result,
             file_name="jewelry_report.txt",
             mime="text/plain"
         )
 
-        if 'history' not in st.session_state:
-            st.session_state['history'] = []
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        sheet.append_row([timestamp, result])
 
-        st.session_state['history'].append(result)
-
-        if st.session_state['history']:
-            st.markdown("### 📜 Previous Reports")
-            for i, r in enumerate(st.session_state['history'][::-1], 1):
-                st.text(f"Report #{i}\n{r}\n")
+        st.markdown("### 📜 Previous Reports")
+        rows = sheet.get_all_values()[::-1]  # reverse to show newest first
+        for i, row in enumerate(rows[:5], 1):  # limit to 5 previous reports for display
+            st.text(f"Report #{i}\n{row[1]}\n")
 
     except Exception as e:
         st.error(f"An error occurred: {str(e)}")
