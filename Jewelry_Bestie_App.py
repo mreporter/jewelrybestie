@@ -127,8 +127,12 @@ if uploaded_files:
                 output.append(f"<p class='jb-section'>{line_stripped}</p>")
             elif line_stripped.lower().startswith("details:"):
                 output.append(f"<p class='jb-section'>Details:</p>")
+            elif line_stripped.lower().startswith("condition:"):
+                output.append(f"<p class='jb-section'>Condition:</p><p>{line_stripped[len('Condition:'):].strip()}</p>")
             elif line_stripped.lower().startswith("estimated resale price:"):
                 output.append(f"<p class='jb-section'>{line_stripped}</p>")
+            elif line_stripped.lower().startswith("additional notes:"):
+                output.append(f"<p class='jb-section'>Additional Notes:</p><p>{line_stripped[len('Additional Notes:'):].strip()}</p>")
             else:
                 output.append(f"<p>{line_stripped}</p>")
         return "\n".join(output)
