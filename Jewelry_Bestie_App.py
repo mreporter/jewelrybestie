@@ -18,7 +18,7 @@ st.write("Your AI-powered best friend for identifying, pricing, and describing j
 uploaded_files = st.file_uploader("Upload one or more photos of your jewelry piece:", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
 
 # Optional dropdown for jewelry type
-jewelry_type = st.selectbox("Optional: Select the type of jewelry (if known):", ["", "Earrings", "Ring", "Bracelet", "Brooch", "Pendant", "Necklace"])
+jewelry_type = st.selectbox("Optional: Select the type of jewelry (if known):", ["", "Earrings", "Ring", "Bracelet", "Brooch", "Pendant", "Necklace", "Set (e.g., Brooch and Earrings)"])
 
 # Optional user input for additional context
 user_notes = st.text_area("Optional: Add any notes about the piece (e.g., markings, brand name, where it was purchased, etc.):")
@@ -74,14 +74,14 @@ if uploaded_files:
                     "type": "text",
                     "text": (
                         "You are a seasoned expert in vintage and antique jewelry appraisal. Carefully examine the uploaded images and provide a professional-level report using this structure:\n"
-                        "Type: [Select from: earrings, ring, bracelet, brooch, pendant, necklace]\n"
+                        "Type: [Select from: earrings, ring, bracelet, brooch, pendant, necklace, set] (If it's a set, describe all pieces included)\n"
                         "Style and Era: [e.g., Art Deco, Mid-century, Victorian, 1950s, etc.]\n"
                         "Materials: [e.g., silver-tone metal, rhinestones, lucite, bakelite, etc.]\n"
                         "Details: Describe in depth the design elements (e.g., filigree, repoussé, carved motifs), clasp types, settings (e.g., prong, bezel), backing (e.g., screw back, post), known or suspected brands or makers, markings, engraving, provenance, and the condition including wear, tarnish, or restoration signs. Use expert-level language and if possible, draw comparisons to similar iconic pieces, brands, or time periods.\n"
                         "Estimated Resale Price: [e.g., $25 to $40 USD — based on sales trends on eBay, Etsy, and Ruby Lane]\n\n"
                         f"{type_note}\n"
                         f"Additional Notes from User: {user_notes}\n\n"
-                        "Ensure your language is rich, confident, and filled with expertise. Include historical references when applicable. If unsure, explain what limits your confidence. Output in plain text only."
+                        "Ensure your language is rich, confident, and filled with expertise. Include historical references when applicable. If unsure, explain what limits your confidence. Output in plain text only and do not use asterisks or markdown formatting."
                     )
                 },
                 *image_inputs
