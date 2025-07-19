@@ -22,7 +22,7 @@ if uploaded_files:
 
     for uploaded_file in uploaded_files:
         image = Image.open(uploaded_file)
-        st.image(image, caption=f"Uploaded: {uploaded_file.name}", use_column_width=True)
+        st.image(image, caption=f"Uploaded: {uploaded_file.name}", use_container_width=True)
 
         buffered = io.BytesIO()
         image.save(buffered, format="PNG")
@@ -47,13 +47,13 @@ if uploaded_files:
                 {
                     "type": "text",
                     "text": (
-                        "You are a vintage jewelry identification expert. Based on these images, provide a detailed report using this structure:\n"
-                        "Type: [one of: earrings, ring, bracelet, brooch, pendant, necklace]\n"
-                        "Style and Era: [e.g., Art Deco, Mid-century, 1950s, etc.]\n"
-                        "Materials: [list of metals, stones, finishes, etc.]\n"
-                        "Details: [what makes this piece unique – motifs, settings, design traits, maker’s marks, hallmarks, etc.]\n"
-                        "Estimated Resale Price: [formatted as: $XX to $XX USD]\n\n"
-                        "Be thorough but concise. Base your estimates on typical resale platforms (eBay, Etsy, Ruby Lane). Output should be plain text, no markdown or emojis."
+                        "You are a seasoned expert in vintage and antique jewelry appraisal. Carefully examine the uploaded images and provide a professional-level report using this structure:\n"
+                        "Type: [Select from: earrings, ring, bracelet, brooch, pendant, necklace]\n"
+                        "Style and Era: [e.g., Art Deco, Mid-century, Victorian, 1950s, etc.]\n"
+                        "Materials: [e.g., silver-tone metal, rhinestones, lucite, bakelite, etc.]\n"
+                        "Details: Include intricate or notable design features, condition, types of settings, potential maker or brand if clues exist, and any hallmark or unique manufacturing techniques. Use detailed language and compare to known styles or makers if possible.\n"
+                        "Estimated Resale Price: [e.g., $25 to $40 USD — based on sales trends on eBay, Etsy, and Ruby Lane]\n\n"
+                        "Ensure your descriptions feel specific and informed. Provide a confident appraisal, and clearly state if confidence is limited due to poor image quality or lack of visible detail. Output in plain text only."
                     )
                 },
                 *image_inputs
