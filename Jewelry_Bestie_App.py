@@ -84,10 +84,10 @@ if uploaded_files:
     ]
 
     def fix_price_formatting(text):
-        match = re.search(r'Estimated Resale Price:\s*\$?(\d{1,5})\s*(?:to|-)?\s*\$?(\d{1,5})', text)
+        match = re.search(r'Estimated Resale Price:\s*\\?\$?(\d{1,5})\s*(?:to|-)?\s*\\?\$?(\d{1,5})', text)
         if match:
             low, high = sorted([int(match.group(1)), int(match.group(2))])
-            formatted_price = f"Estimated Resale Price: \${low} to \${high} USD"
+            formatted_price = f"Estimated Resale Price: ${low} to ${high} USD"
             text = re.sub(r'Estimated Resale Price:.*', formatted_price, text)
         return text
 
