@@ -1,7 +1,7 @@
 import streamlit as st
 import openai
 import base64
-from PIL import Image
+from PIL import Image, ExifTags
 import io
 import os
 import re
@@ -25,6 +25,24 @@ if uploaded_files:
 
     for uploaded_file in uploaded_files:
         image = Image.open(uploaded_file)
+
+        # Auto-rotate image based on EXIF orientation
+        try:
+            for orientation in ExifTags.TAGS.keys():
+                if ExifTags.TAGS[orientation] == 'Orientation':
+                    break
+            exif = image._getexif()
+            if exif is not None:
+                orientation_value = exif.get(orientation)
+                if orientation_value == 3:
+                    image = image.rotate(180, expand=True)
+                elif orientation_value == 6:
+                    image = image.rotate(270, expand=True)
+                elif orientation_value == 8:
+                    image = image.rotate(90, expand=True)
+        except Exception as e:
+            pass
+
         st.image(image, caption=f"Uploaded: {uploaded_file.name}", use_container_width=True)
 
         buffered = io.BytesIO()
@@ -69,7 +87,7 @@ if uploaded_files:
         match = re.search(r'Estimated Resale Price:\s*\$?(\d{1,5})\s*(?:to|-)?\s*\$?(\d{1,5})', text)
         if match:
             low, high = sorted([int(match.group(1)), int(match.group(2))])
-            formatted_price = f"Estimated Resale Price: ${low} to ${high} USD"
+            formatted_price = f"Estimated Resale Price: \${low} to \${high} USD"
             text = re.sub(r'Estimated Resale Price:.*', formatted_price, text)
         return text
 
