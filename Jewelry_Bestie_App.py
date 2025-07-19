@@ -25,6 +25,14 @@ st.markdown("""
         color: #3c3c3c;
         margin-top: 1.5em;
     }
+    .copy-box {
+        background-color: #f4f4f4;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-family: 'Courier New', monospace;
+        white-space: pre-wrap;
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -138,7 +146,7 @@ if uploaded_files and generate_report:
                 output.append(f"<p class='jb-section'>Additional Notes:</p><p>{line_stripped[len('Additional Notes:'):].strip()}</p>")
             else:
                 output.append(f"<p>{line_stripped}</p>")
-        return "\n".join(output)
+        return "\n".join(output), text.strip()
 
     try:
         response = openai.chat.completions.create(
@@ -149,16 +157,20 @@ if uploaded_files and generate_report:
 
         result = response.choices[0].message.content.strip()
         result = fix_price_formatting(result)
+        formatted_html, raw_text = format_output_for_display(result)
 
         st.markdown("---")
-        st.markdown(format_output_for_display(result), unsafe_allow_html=True)
+        st.markdown(formatted_html, unsafe_allow_html=True)
 
         st.download_button(
             label="📀 Download Report",
-            data=result,
+            data=raw_text,
             file_name="jewelry_report.txt",
             mime="text/plain"
         )
+
+        with st.expander("📋 Copy Full Listing Info for eBay or Etsy"):
+            st.code(raw_text, language='text')
 
     except Exception as e:
         st.error(f"An error occurred: {str(e)}")
