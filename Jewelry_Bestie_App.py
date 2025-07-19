@@ -32,7 +32,6 @@ if uploaded_files:
     st.markdown("---")
     st.write("Analyzing your jewelry pieces with AI magic...")
 
-    # Build content block for each image
     image_inputs = [
         {
             "type": "image_url",
@@ -40,7 +39,6 @@ if uploaded_files:
         } for img in images_base64
     ]
 
-    # Add prompt as the first input
     messages = [
         {
             "role": "user",
@@ -48,17 +46,13 @@ if uploaded_files:
                 {
                     "type": "text",
                     "text": (
-                        "You are a vintage jewelry identification expert. Based on these images, provide a report using the structure below. "
-                        "Choose one for type: earrings, ring, bracelet, brooch, pendant, necklace. "
-                        "If there are two identical items, it's likely earrings. A pin/clasp usually indicates a brooch. "
-                        "Use all images and your expertise to identify the piece and format your output as plain text, no markdown or emojis."
-                        "\n\nFormat exactly like this:\n"
-                        "Type: [type]\n"
-                        "Style and Era: [style and estimated era]\n"
-                        "Materials: [materials used]\n"
-                        "Details: [any additional notes or identifiers]\n"
-                        "Estimated Resale Price: $XX to $XX USD\n"
-                        "\nEnsure price formatting matches this exactly: dollar signs before both numbers, the word 'to' spaced properly, and ending with 'USD'."
+                        "You are a vintage jewelry identification expert. Based on these images, provide a detailed report using this structure:\n"
+                        "Type: [one of: earrings, ring, bracelet, brooch, pendant, necklace]\n"
+                        "Style and Era: [e.g., Art Deco, Mid-century, 1950s, etc.]\n"
+                        "Materials: [list of metals, stones, finishes, etc.]\n"
+                        "Details: [what makes this piece unique – motifs, settings, design traits, maker’s marks, hallmarks, etc.]\n"
+                        "Estimated Resale Price: [formatted as: $XX to $XX USD]\n\n"
+                        "Be thorough but concise. Base your estimates on typical resale platforms (eBay, Etsy, Ruby Lane). Output should be plain text, no markdown or emojis."
                     )
                 },
                 *image_inputs
@@ -67,11 +61,11 @@ if uploaded_files:
     ]
 
     def fix_price_formatting(text):
-        text = re.sub(r'(Estimated Resale Price:\s*)(?!\$)(\d+\s*to\s*\d+)', r'\1$\2 USD', text)
-        text = re.sub(r'(Estimated Resale Price:\s*)\$(\d+)\s*to\s*\$?(\d+)(?!\s*USD)', r'\1$\2 to $\3 USD', text)
-        text = re.sub(r'(?<!\$)(\d{1,4})to(\d{1,4})(?!\s*USD)', r'$\1 to $\2 USD', text)
-        text = re.sub(r'(?<!\$)(\d{1,4})\s*to\s*(\d{1,4})(?!\s*USD)', r'$\1 to $\2 USD', text)
-        text = re.sub(r'(USD\s*)USD', r'USD', text)  # Fix double USD
+        match = re.search(r'Estimated Resale Price:\s*\$?(\d{1,5})\s*(?:to|-)?\s*\$?(\d{1,5})', text)
+        if match:
+            low, high = sorted([int(match.group(1)), int(match.group(2))])
+            formatted_price = f"Estimated Resale Price: ${low} to ${high} USD"
+            text = re.sub(r'Estimated Resale Price:.*', formatted_price, text)
         return text
 
     try:
@@ -86,6 +80,23 @@ if uploaded_files:
 
         st.markdown("---")
         st.text(result)
+
+        st.download_button(
+            label="💾 Download Report",
+            data=result,
+            file_name="jewelry_report.txt",
+            mime="text/plain"
+        )
+
+        if 'history' not in st.session_state:
+            st.session_state['history'] = []
+
+        st.session_state['history'].append(result)
+
+        if st.session_state['history']:
+            st.markdown("### 📜 Previous Reports")
+            for i, r in enumerate(st.session_state['history'][::-1], 1):
+                st.text(f"Report #{i}\n{r}\n")
 
     except Exception as e:
         st.error(f"An error occurred: {str(e)}")
