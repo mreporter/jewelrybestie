@@ -97,6 +97,26 @@ if uploaded_files:
             text = re.sub(r'Estimated Resale Price:.*', formatted_price, text)
         return text
 
+    def format_output_for_display(text):
+        lines = text.strip().split('\n')
+        output = []
+        for line in lines:
+            if line.lower().startswith("type:"):
+                output.append(f"### {line.strip()}")
+            elif line.lower().startswith("style and era:"):
+                output.append(f"### {line.strip()}")
+            elif line.lower().startswith("materials:"):
+                output.append(f"### {line.strip()}")
+            elif line.lower().startswith("details:"):
+                output.append(f"### Details")
+            elif line.lower().startswith("estimated resale price:"):
+                output.append(f"### {line.strip()}")
+            elif line.strip() == "":
+                output.append("")
+            else:
+                output.append(line.strip())
+        return "\n\n".join(output)
+
     try:
         response = openai.chat.completions.create(
             model="gpt-4o",
@@ -108,7 +128,7 @@ if uploaded_files:
         result = fix_price_formatting(result)
 
         st.markdown("---")
-        st.text(result)
+        st.markdown(format_output_for_display(result))
 
         st.download_button(
             label="📀 Download Report",
