@@ -76,9 +76,10 @@ if uploaded_files:
 
     # Function to fix bad price formatting
     def fix_price_formatting(text):
-        text = re.sub(r'(?<!\$)(\d{1,4})\s*to\s*(\d{1,4})(?!\s*USD)', r'$\1 to $\2 USD', text)
+        text = re.sub(r'(Price Range:\s*)(?!\$)(\d+\s*to\s*\d+)', r'\1$\2 USD', text)
+        text = re.sub(r'(Price Range:\s*)\$(\d+)\s*to\s*\$?(\d+)(?!\s*USD)', r'\1$\2 to $\3 USD', text)
         text = re.sub(r'(?<!\$)(\d{1,4})to(\d{1,4})(?!\s*USD)', r'$\1 to $\2 USD', text)
-        text = re.sub(r'\$(\d{1,4})\s*to\s*\$?(\d{1,4})(?!\s*USD)', r'$\1 to $\2 USD', text)
+        text = re.sub(r'(?<!\$)(\d{1,4})\s*to\s*(\d{1,4})(?!\s*USD)', r'$\1 to $\2 USD', text)
         return text
 
     try:
@@ -90,6 +91,9 @@ if uploaded_files:
 
         result = response.choices[0].message.content
         result = fix_price_formatting(result)  # Fix price formatting before display
+
+        # Remove duplicate header if present
+        result = re.sub(r'(## Jewelry Bestie\'s Report\n\n)+', r'## Jewelry Bestie's Report\n\n', result)
 
         st.markdown("---")
         st.markdown(result)
