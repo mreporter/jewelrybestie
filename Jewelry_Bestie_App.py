@@ -17,6 +17,9 @@ st.write("Your AI-powered best friend for identifying, pricing, and describing j
 # Allow multiple image uploads
 uploaded_files = st.file_uploader("Upload one or more photos of your jewelry piece:", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
 
+# Optional dropdown for jewelry type
+jewelry_type = st.selectbox("Optional: Select the type of jewelry (if known):", ["", "Earrings", "Ring", "Bracelet", "Brooch", "Pendant", "Necklace"])
+
 # Optional user input for additional context
 user_notes = st.text_area("Optional: Add any notes about the piece (e.g., markings, brand name, where it was purchased, etc.):")
 
@@ -61,6 +64,8 @@ if uploaded_files:
         } for img in images_base64
     ]
 
+    type_note = f"Jewelry Type (user selected): {jewelry_type}" if jewelry_type else ""
+
     messages = [
         {
             "role": "user",
@@ -74,6 +79,7 @@ if uploaded_files:
                         "Materials: [e.g., silver-tone metal, rhinestones, lucite, bakelite, etc.]\n"
                         "Details: Describe in depth the design elements (e.g., filigree, repoussé, carved motifs), clasp types, settings (e.g., prong, bezel), backing (e.g., screw back, post), known or suspected brands or makers, markings, engraving, provenance, and the condition including wear, tarnish, or restoration signs. Use expert-level language and if possible, draw comparisons to similar iconic pieces, brands, or time periods.\n"
                         "Estimated Resale Price: [e.g., $25 to $40 USD — based on sales trends on eBay, Etsy, and Ruby Lane]\n\n"
+                        f"{type_note}\n"
                         f"Additional Notes from User: {user_notes}\n\n"
                         "Ensure your language is rich, confident, and filled with expertise. Include historical references when applicable. If unsure, explain what limits your confidence. Output in plain text only."
                     )
