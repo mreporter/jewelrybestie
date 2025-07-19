@@ -118,18 +118,19 @@ if uploaded_files:
         lines = text.strip().split('\n')
         output = []
         for line in lines:
-            if line.lower().startswith("type:"):
-                output.append(f"<p class='jb-section'>{line.strip()}</p>")
-            elif line.lower().startswith("style and era:"):
-                output.append(f"<p class='jb-section'>{line.strip()}</p>")
-            elif line.lower().startswith("materials:"):
-                output.append(f"<p class='jb-section'>{line.strip()}</p>")
-            elif line.lower().startswith("details:"):
-                output.append(f"<p class='jb-section'>Details</p>")
-            elif line.lower().startswith("estimated resale price:"):
-                output.append(f"<p class='jb-section'>{line.strip()}</p>")
+            line_stripped = line.strip()
+            if line_stripped.lower().startswith("type:"):
+                output.append(f"<p class='jb-section'>{line_stripped}</p>")
+            elif line_stripped.lower().startswith("style and era:"):
+                output.append(f"<p class='jb-section'>{line_stripped}</p>")
+            elif line_stripped.lower().startswith("materials:"):
+                output.append(f"<p class='jb-section'>{line_stripped}</p>")
+            elif line_stripped.lower().startswith("details:"):
+                output.append(f"<p class='jb-section'>Details:</p>")
+            elif line_stripped.lower().startswith("estimated resale price:"):
+                output.append(f"<p class='jb-section'>{line_stripped}</p>")
             else:
-                output.append(f"<p>{line.strip()}</p>")
+                output.append(f"<p>{line_stripped}</p>")
         return "\n".join(output)
 
     try:
