@@ -13,7 +13,7 @@ openai.api_key = st.secrets["OPENAI_API_KEY"]
 st.set_page_config(page_title="Jewelry Bestie", page_icon="💎")
 st.markdown("""
     <style>
-    .reportview-container .markdown-text-container h3 {
+    h3 {
         font-family: 'Georgia', serif;
         font-size: 1.4rem;
         color: #333;
@@ -24,7 +24,7 @@ st.markdown("""
         color: #444;
     }
     </style>
-    "", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
 st.title("💎 Jewelry Bestie")
 st.write("Your AI-powered best friend for identifying, pricing, and describing jewelry.")
