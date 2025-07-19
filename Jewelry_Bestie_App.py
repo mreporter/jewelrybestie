@@ -13,16 +13,17 @@ openai.api_key = st.secrets["OPENAI_API_KEY"]
 st.set_page_config(page_title="Jewelry Bestie", page_icon="💎")
 st.markdown("""
     <style>
-    h4 {
-        font-family: 'Georgia', serif;
-        font-size: 20px;
-        color: #3c3c3c;
-        margin-top: 1.5em;
-    }
     .reportview-container .markdown-text-container {
         font-family: 'Arial', sans-serif;
         font-size: 16px;
         color: #444;
+    }
+    .jb-section {
+        font-family: 'Georgia', serif;
+        font-size: 18px;
+        font-weight: bold;
+        color: #3c3c3c;
+        margin-top: 1.5em;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -118,15 +119,15 @@ if uploaded_files:
         output = []
         for line in lines:
             if line.lower().startswith("type:"):
-                output.append(f"<h4>{line.strip()}</h4>")
+                output.append(f"<p class='jb-section'>{line.strip()}</p>")
             elif line.lower().startswith("style and era:"):
-                output.append(f"<h4>{line.strip()}</h4>")
+                output.append(f"<p class='jb-section'>{line.strip()}</p>")
             elif line.lower().startswith("materials:"):
-                output.append(f"<h4>{line.strip()}</h4>")
+                output.append(f"<p class='jb-section'>{line.strip()}</p>")
             elif line.lower().startswith("details:"):
-                output.append(f"<h4>Details</h4>")
+                output.append(f"<p class='jb-section'>Details</p>")
             elif line.lower().startswith("estimated resale price:"):
-                output.append(f"<h4>{line.strip()}</h4>")
+                output.append(f"<p class='jb-section'>{line.strip()}</p>")
             else:
                 output.append(f"<p>{line.strip()}</p>")
         return "\n".join(output)
