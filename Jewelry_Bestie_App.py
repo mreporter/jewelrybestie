@@ -80,6 +80,7 @@ if uploaded_files:
         text = re.sub(r'(Price Range:\s*)\$(\d+)\s*to\s*\$?(\d+)(?!\s*USD)', r'\1$\2 to $\3 USD', text)
         text = re.sub(r'(?<!\$)(\d{1,4})to(\d{1,4})(?!\s*USD)', r'$\1 to $\2 USD', text)
         text = re.sub(r'(?<!\$)(\d{1,4})\s*to\s*(\d{1,4})(?!\s*USD)', r'$\1 to $\2 USD', text)
+        text = re.sub(r'(USD\s*)USD', r'USD', text)  # Fix double USD if it happens
         return text
 
     try:
@@ -90,10 +91,10 @@ if uploaded_files:
         )
 
         result = response.choices[0].message.content
-        result = fix_price_formatting(result)  # Fix price formatting before display
+        result = fix_price_formatting(result)
 
         # Remove duplicate header if present
-        result = re.sub(r'(## Jewelry Bestie\'s Report\n\n)+', r'## Jewelry Bestie's Report\n\n', result)
+        result = re.sub(r"(## Jewelry Bestie's Report\n\n)+", "## Jewelry Bestie's Report\n\n", result)
 
         st.markdown("---")
         st.markdown(result)
