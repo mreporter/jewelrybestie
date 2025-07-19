@@ -40,7 +40,10 @@ jewelry_type = st.selectbox("Optional: Select the type of jewelry (if known):", 
 # Optional user input for additional context
 user_notes = st.text_area("Optional: Add any notes about the piece (e.g., markings, brand name, where it was purchased, etc.):")
 
-if uploaded_files:
+# Add button to trigger analysis
+generate_report = st.button("✨ Generate Jewelry Report")
+
+if uploaded_files and generate_report:
     images_base64 = []
 
     for uploaded_file in uploaded_files:
@@ -160,5 +163,7 @@ if uploaded_files:
     except Exception as e:
         st.error(f"An error occurred: {str(e)}")
 
+elif uploaded_files and not generate_report:
+    st.info("Click '✨ Generate Jewelry Report' after entering your details to proceed!")
 else:
     st.info("Upload one or more photos above to get started!")
