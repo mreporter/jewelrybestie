@@ -48,25 +48,18 @@ if uploaded_files:
                 {
                     "type": "text",
                     "text": (
-                        "You are a vintage jewelry identification expert. Based on these images, what type of jewelry is shown? "
-                        "Choose from: earrings, ring, bracelet, brooch, pendant, necklace. "
-                        "If any item has a pin or clasp on the back, it's likely a brooch. "
-                        "If there are two identical items, it may be earrings. Use all the images to make one identification. "
-                        "Also describe the style, era, materials, and estimated resale price. "
-                        "Provide the resale price in USD as a realistic range based on sold comps from eBay or Etsy within the last year. "
-                        "Assume the item is in good, wearable condition. Factor in design, craftsmanship, and materials such as silver-tone vs sterling. "
-                        "If the item looks designer-signed, branded, or handmade, price it on the higher end. If it looks like generic costume jewelry, price it on the lower end. "
-                        "If it's a known collectible brand, mention that too. Format the price range using this exact format: \"$XX to $XX USD\" — always with a space before and after 'to', a dollar sign before both numbers, and 'USD' at the end. Do NOT merge the numbers (e.g., NEVER write '30to100' or '$30to$100'). Always include both dollar signs and always use numerals (e.g., '$25 to $75 USD', NOT 'twenty-five to seventy-five'). This format is REQUIRED. "
-                        "Always output the full report using this exact structure with markdown headers and labels:\n\n"
-                        "## Jewelry Bestie's Report\n\n"
-                        "### Style and Era\n"
-                        "Style: [describe style]\n\n"
-                        "Era: [describe era]\n\n"
-                        "### Materials\n"
-                        "Material: [describe materials]\n\n"
-                        "### Estimated Resale Price\n"
-                        "Price Range: $XX to $XX USD\n\n"
-                        "If it's from a collectible brand, branded, or sterling, note that it may sell for more."
+                        "You are a vintage jewelry identification expert. Based on these images, provide a report using the structure below. "
+                        "Choose one for type: earrings, ring, bracelet, brooch, pendant, necklace. "
+                        "If there are two identical items, it's likely earrings. A pin/clasp usually indicates a brooch. "
+                        "Use all images and your expertise to identify the piece and format your output as plain text, no markdown or emojis."
+                        "
+                        "\n\nFormat exactly like this:\n"
+                        "Type: [type]\n"
+                        "Style and Era: [style and estimated era]\n"
+                        "Materials: [materials used]\n"
+                        "Details: [any additional notes or identifiers]\n"
+                        "Estimated Resale Price: $XX to $XX USD\n"
+                        "\nEnsure price formatting matches this exactly: dollar signs before both numbers, the word 'to' spaced properly, and ending with 'USD'."
                     )
                 },
                 *image_inputs
@@ -74,13 +67,12 @@ if uploaded_files:
         }
     ]
 
-    # Function to fix bad price formatting
     def fix_price_formatting(text):
-        text = re.sub(r'(Price Range:\s*)(?!\$)(\d+\s*to\s*\d+)', r'\1$\2 USD', text)
-        text = re.sub(r'(Price Range:\s*)\$(\d+)\s*to\s*\$?(\d+)(?!\s*USD)', r'\1$\2 to $\3 USD', text)
+        text = re.sub(r'(Estimated Resale Price:\s*)(?!\$)(\d+\s*to\s*\d+)', r'\1$\2 USD', text)
+        text = re.sub(r'(Estimated Resale Price:\s*)\$(\d+)\s*to\s*\$?(\d+)(?!\s*USD)', r'\1$\2 to $\3 USD', text)
         text = re.sub(r'(?<!\$)(\d{1,4})to(\d{1,4})(?!\s*USD)', r'$\1 to $\2 USD', text)
         text = re.sub(r'(?<!\$)(\d{1,4})\s*to\s*(\d{1,4})(?!\s*USD)', r'$\1 to $\2 USD', text)
-        text = re.sub(r'(USD\s*)USD', r'USD', text)  # Fix double USD if it happens
+        text = re.sub(r'(USD\s*)USD', r'USD', text)  # Fix double USD
         return text
 
     try:
@@ -90,14 +82,11 @@ if uploaded_files:
             max_tokens=700
         )
 
-        result = response.choices[0].message.content
+        result = response.choices[0].message.content.strip()
         result = fix_price_formatting(result)
 
-        # Remove duplicate header if present
-        result = re.sub(r"(## Jewelry Bestie's Report\n\n)+", "## Jewelry Bestie's Report\n\n", result)
-
         st.markdown("---")
-        st.markdown(result)
+        st.text(result)
 
     except Exception as e:
         st.error(f"An error occurred: {str(e)}")
