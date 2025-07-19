@@ -51,9 +51,9 @@ if uploaded_files:
                         "Type: [Select from: earrings, ring, bracelet, brooch, pendant, necklace]\n"
                         "Style and Era: [e.g., Art Deco, Mid-century, Victorian, 1950s, etc.]\n"
                         "Materials: [e.g., silver-tone metal, rhinestones, lucite, bakelite, etc.]\n"
-                        "Details: Include intricate or notable design features, condition, types of settings, potential maker or brand if clues exist, and any hallmark or unique manufacturing techniques. Use detailed language and compare to known styles or makers if possible.\n"
+                        "Details: Describe in depth the design elements (e.g., filigree, repoussé, carved motifs), clasp types, settings (e.g., prong, bezel), backing (e.g., screw back, post), known or suspected brands or makers, markings, engraving, provenance, and the condition including wear, tarnish, or restoration signs. Use expert-level language and if possible, draw comparisons to similar iconic pieces, brands, or time periods.\n"
                         "Estimated Resale Price: [e.g., $25 to $40 USD — based on sales trends on eBay, Etsy, and Ruby Lane]\n\n"
-                        "Ensure your descriptions feel specific and informed. Provide a confident appraisal, and clearly state if confidence is limited due to poor image quality or lack of visible detail. Output in plain text only."
+                        "Ensure your language is rich, confident, and filled with expertise. Include historical references when applicable. If unsure, explain what limits your confidence. Output in plain text only."
                     )
                 },
                 *image_inputs
@@ -73,7 +73,7 @@ if uploaded_files:
         response = openai.chat.completions.create(
             model="gpt-4o",
             messages=messages,
-            max_tokens=700
+            max_tokens=1000
         )
 
         result = response.choices[0].message.content.strip()
