@@ -52,7 +52,6 @@ if uploaded_files:
                         "Choose one for type: earrings, ring, bracelet, brooch, pendant, necklace. "
                         "If there are two identical items, it's likely earrings. A pin/clasp usually indicates a brooch. "
                         "Use all images and your expertise to identify the piece and format your output as plain text, no markdown or emojis."
-                        "
                         "\n\nFormat exactly like this:\n"
                         "Type: [type]\n"
                         "Style and Era: [style and estimated era]\n"
