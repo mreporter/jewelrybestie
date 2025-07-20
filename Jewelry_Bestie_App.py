@@ -36,7 +36,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-st.title("💎 Jewelry Bestie")
+st.title(":scroll: Jewelry Bestie")
 st.write("Your AI-powered best friend for identifying, pricing, and describing jewelry.")
 
 # Session state to store history
@@ -75,12 +75,13 @@ if not st.session_state.clear_fields:
                 "notes": st.session_state.user_notes
             })
             st.session_state.clear_fields = False
+            st.balloons()
             st.experimental_rerun()
 
 # Display last report if available
 if st.session_state.report_history:
-    last_report = st.session_state.report_history[-1]
     st.markdown("## 📄 Jewelry Report")
+    last_report = st.session_state.report_history[-1]
     for image in last_report["images"]:
         st.image(image, caption="Uploaded Jewelry Image", use_container_width=True)
     st.markdown(f"**Jewelry Type:** {last_report['type']}")
@@ -95,3 +96,12 @@ if st.session_state.report_history:
         st.session_state.user_notes = ""
         st.session_state.session_id = datetime.now().strftime("%Y%m%d%H%M%S")
         st.experimental_rerun()
+
+# Scroll to top for a new session
+if st.session_state.new_report:
+    st.markdown("""
+        <script>
+        window.scrollTo({top: 0, behavior: 'smooth'});
+        </script>
+    """, unsafe_allow_html=True)
+    st.session_state.new_report = False
