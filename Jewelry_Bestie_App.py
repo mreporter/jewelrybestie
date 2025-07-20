@@ -34,13 +34,6 @@ st.markdown("""
         white-space: pre-wrap;
     }
     </style>
-    <script>
-        window.onload = function() {
-            if (window.location.hash === "#scroll-to-top") {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        }
-    </script>
     """, unsafe_allow_html=True)
 
 st.title("💎 Jewelry Bestie")
@@ -81,14 +74,13 @@ user_notes = st.session_state.user_notes
 
 # Show success when a new report is ready
 if generate_report and uploaded_files:
-    st.success("🎉 Your jewelry report is ready! Scroll down to view your results.")
-    st.markdown("<a name='scroll-to-top'></a>", unsafe_allow_html=True)
     st.session_state.report_history.append({
         "images": uploaded_files,
         "type": jewelry_type,
         "notes": user_notes
     })
     st.session_state.clear_fields = False
+    st.experimental_rerun()
 
 # Start New Report Button (only after a report has been generated)
 if st.session_state.report_history:
@@ -100,3 +92,12 @@ if st.session_state.report_history:
         st.session_state.user_notes = ""
         st.session_state.session_id = datetime.now().strftime("%Y%m%d%H%M%S")
         st.experimental_rerun()
+
+# Display last report if available
+if st.session_state.report_history:
+    last_report = st.session_state.report_history[-1]
+    st.markdown("## 📄 Jewelry Report")
+    for image in last_report["images"]:
+        st.image(image, caption="Uploaded Jewelry Image", use_column_width=True)
+    st.markdown(f"**Jewelry Type:** {last_report['type']}")
+    st.markdown(f"**Notes:** {last_report['notes']}")
