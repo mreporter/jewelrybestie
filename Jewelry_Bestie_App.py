@@ -42,7 +42,7 @@ Jewelry Type: (e.g., Brooch, Ring, Necklace, etc.)
 Materials: (e.g., enamel, rhinestones, silver tone, plastic, etc.)
 Estimated Era or Style: (e.g., Mid-century, Art Deco, 1980s, etc.)
 Detailed Description: (1–2 sentences describing the design, color, shape, condition, etc.)
-Estimated Resale Value Range: (give a realistic estimate based on online comps)
+Estimated Resale Value Range: (give a realistic estimate based on online comps in a format like $30–$60)
 
 Use this input for context if helpful:
 Jewelry Type: {jewelry_type}
@@ -83,8 +83,6 @@ if st.session_state.report_history:
     last_report = st.session_state.report_history[-1]
     for image in last_report["images"]:
         st.image(image, caption="Uploaded Jewelry Image", use_container_width=True)
-    st.markdown(f"**Jewelry Type:** {last_report['type']}")
-    st.markdown(f"**Notes:** {last_report['notes']}")
     st.markdown("---")
     st.markdown(last_report.get("report", "No report available."))
 
