@@ -86,7 +86,8 @@ if st.session_state.report_history:
     st.markdown("---")
     st.markdown(last_report.get("report", "No report available."))
 
-    st.code(last_report.get("report", ""), language='markdown')
+    with st.expander("📋 Copy Description for eBay or Etsy"):
+        st.code(last_report.get("report", ""), language='markdown')
 
     if st.button("Start New Report"):
         st.session_state.clear_fields = True
