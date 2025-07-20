@@ -40,7 +40,7 @@ if not st.session_state.clear_fields:
 
             try:
                 response = openai.chat.completions.create(
-                    model="gpt-4-vision",
+                    model="gpt-4-vision-preview",
                     messages=[
                         {"role": "user", "content": [
                             {"type": "text", "text": prompt},
