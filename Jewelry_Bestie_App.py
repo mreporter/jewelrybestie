@@ -39,6 +39,10 @@ st.markdown("""
 st.title("💎 Jewelry Bestie")
 st.write("Your AI-powered best friend for identifying, pricing, and describing jewelry.")
 
+# Session state to store history
+if 'report_history' not in st.session_state:
+    st.session_state.report_history = []
+
 # Allow multiple image uploads
 uploaded_files = st.file_uploader("Upload one or more photos of your jewelry piece:", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
 
@@ -57,7 +61,6 @@ if uploaded_files and generate_report:
     for uploaded_file in uploaded_files:
         image = Image.open(uploaded_file)
 
-        # Auto-rotate image based on EXIF orientation
         try:
             for orientation in ExifTags.TAGS.keys():
                 if ExifTags.TAGS[orientation] == 'Orientation':
@@ -71,7 +74,7 @@ if uploaded_files and generate_report:
                     image = image.rotate(270, expand=True)
                 elif orientation_value == 8:
                     image = image.rotate(90, expand=True)
-        except Exception as e:
+        except Exception:
             pass
 
         st.image(image, caption=f"Uploaded: {uploaded_file.name}", use_container_width=True)
@@ -172,6 +175,8 @@ if uploaded_files and generate_report:
         with st.expander("📋 Copy Full Listing Info for eBay or Etsy"):
             st.code(raw_text, language='text')
 
+        st.session_state.report_history.append(raw_text)
+
     except Exception as e:
         st.error(f"An error occurred: {str(e)}")
 
@@ -179,3 +184,11 @@ elif uploaded_files and not generate_report:
     st.info("Click '✨ Generate Jewelry Report' after entering your details to proceed!")
 else:
     st.info("Upload one or more photos above to get started!")
+
+# Display session history
+if st.session_state.report_history:
+    st.markdown("---")
+    st.markdown("### 📄 Previous Reports This Session")
+    for i, report in enumerate(st.session_state.report_history[::-1], 1):
+        with st.expander(f"Report {i}"):
+            st.code(report, language='text')
