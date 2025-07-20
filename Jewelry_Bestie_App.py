@@ -49,23 +49,36 @@ if 'clear_fields' not in st.session_state:
 if 'new_report' not in st.session_state:
     st.session_state.new_report = False
 
-if st.button("Start New Report"):
-    st.session_state.clear_fields = True
-    st.session_state.new_report = True
-    st.success("Ready for a new report! ✨")
+# Initialize input field values in session state
+if 'uploaded_files' not in st.session_state:
+    st.session_state.uploaded_files = None
+if 'jewelry_type' not in st.session_state:
+    st.session_state.jewelry_type = ""
+if 'user_notes' not in st.session_state:
+    st.session_state.user_notes = ""
 
-if st.session_state.clear_fields:
-    uploaded_files = None
-    jewelry_type = ""
-    user_notes = ""
-    st.session_state.clear_fields = False
-else:
-    uploaded_files = st.file_uploader("Upload one or more photos of your jewelry piece:", type=["jpg", "jpeg", "png"], accept_multiple_files=True, key='file_uploader')
-    jewelry_type = st.selectbox("Optional: Select the type of jewelry (if known):", ["", "Earrings", "Ring", "Bracelet", "Brooch", "Pendant", "Necklace", "Set (e.g., Brooch and Earrings)"], key='type_selector')
-    user_notes = st.text_area("Optional: Add any notes about the piece (e.g., markings, brand name, where it was purchased, etc.):", key='notes_area')
+# Display Upload and Input Fields
+if not st.session_state.clear_fields:
+    st.session_state.uploaded_files = st.file_uploader("Upload one or more photos of your jewelry piece:", type=["jpg", "jpeg", "png"], accept_multiple_files=True, key='file_uploader')
+    st.session_state.jewelry_type = st.selectbox("Optional: Select the type of jewelry (if known):", ["", "Earrings", "Ring", "Bracelet", "Brooch", "Pendant", "Necklace", "Set (e.g., Brooch and Earrings)"], key='type_selector')
+    st.session_state.user_notes = st.text_area("Optional: Add any notes about the piece (e.g., markings, brand name, where it was purchased, etc.):", key='notes_area')
 
 # Add button to trigger analysis
 generate_report = st.button("✨ Generate Jewelry Report")
+
+# Button to clear and start new report
+if st.button("Start New Report"):
+    st.session_state.clear_fields = True
+    st.session_state.new_report = True
+    st.session_state.uploaded_files = None
+    st.session_state.jewelry_type = ""
+    st.session_state.user_notes = ""
+    st.success("Ready for a new report! ✨")
+    st.experimental_rerun()
+
+uploaded_files = st.session_state.uploaded_files
+jewelry_type = st.session_state.jewelry_type
+user_notes = st.session_state.user_notes
 
 if uploaded_files and generate_report:
     images_base64 = []
@@ -182,7 +195,7 @@ if uploaded_files and generate_report:
         st.markdown(formatted_html, unsafe_allow_html=True)
 
         st.download_button(
-            label="📀 Download Report",
+            label="💼 Download Report",
             data=raw_text,
             file_name="jewelry_report.txt",
             mime="text/plain"
@@ -212,3 +225,14 @@ if st.session_state.report_history:
         with st.expander(f"Report {display_num}"):
             st.image(f"data:image/png;base64,{thumb_b64}", width=100)
             st.code(report, language='text')
+
+# Move Start New Report button to bottom
+if st.session_state.report_history:
+    st.markdown("---")
+    if st.button("Start New Report (Bottom)"):
+        st.session_state.clear_fields = True
+        st.session_state.new_report = True
+        st.session_state.uploaded_files = None
+        st.session_state.jewelry_type = ""
+        st.session_state.user_notes = ""
+        st.experimental_rerun()
