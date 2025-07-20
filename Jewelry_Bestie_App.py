@@ -50,6 +50,8 @@ if 'new_report' not in st.session_state:
     st.session_state.new_report = False
 if 'session_id' not in st.session_state:
     st.session_state.session_id = datetime.now().strftime("%Y%m%d%H%M%S")
+if 'trigger_report_generation' not in st.session_state:
+    st.session_state.trigger_report_generation = False
 
 # Initialize input field values in session state
 if 'uploaded_files' not in st.session_state:
@@ -67,16 +69,20 @@ if not st.session_state.clear_fields:
 
     # Add button to trigger analysis
     if st.button("✨ Generate Jewelry Report"):
-        uploaded_files = st.session_state.uploaded_files
-        if uploaded_files:
-            st.session_state.report_history.append({
-                "images": uploaded_files,
-                "type": st.session_state.jewelry_type,
-                "notes": st.session_state.user_notes
-            })
-            st.session_state.clear_fields = False
-            st.balloons()
-            st.experimental_rerun()
+        st.session_state.trigger_report_generation = True
+
+# Process report generation
+if st.session_state.trigger_report_generation:
+    uploaded_files = st.session_state.uploaded_files
+    if uploaded_files:
+        st.session_state.report_history.append({
+            "images": uploaded_files,
+            "type": st.session_state.jewelry_type,
+            "notes": st.session_state.user_notes
+        })
+        st.session_state.clear_fields = False
+        st.session_state.trigger_report_generation = False
+        st.experimental_rerun()
 
 # Display last report if available
 if st.session_state.report_history:
