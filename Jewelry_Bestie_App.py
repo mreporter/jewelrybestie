@@ -4,7 +4,7 @@ import base64
 from PIL import Image
 from datetime import datetime
 
-# Set your OpenAI API key
+# Set OpenAI API key
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 # Streamlit page config
@@ -22,7 +22,7 @@ if 'new_report' not in st.session_state:
 if 'session_id' not in st.session_state:
     st.session_state.session_id = datetime.now().strftime("%Y%m%d%H%M%S")
 
-# Input fields
+# Upload UI
 if not st.session_state.clear_fields:
     uploaded_files = st.file_uploader("Upload one or more photos of your jewelry piece:", type=["jpg", "jpeg", "png"], accept_multiple_files=True, key=f'file_uploader_{st.session_state.session_id}')
     jewelry_type = st.selectbox("Optional: Select the type of jewelry (if known):", ["", "Earrings", "Ring", "Bracelet", "Brooch", "Pendant", "Necklace", "Set (e.g., Brooch and Earrings)"], key=f'type_selector_{st.session_state.session_id}')
@@ -40,7 +40,7 @@ if not st.session_state.clear_fields:
 
             try:
                 response = openai.chat.completions.create(
-                    model="gpt-4-vision",
+                    model="gpt-4o",
                     messages=[
                         {"role": "user", "content": [
                             {"type": "text", "text": prompt},
@@ -50,7 +50,7 @@ if not st.session_state.clear_fields:
                             ]
                         ]}
                     ],
-                    max_tokens=800
+                    max_tokens=1000
                 )
                 report_text = response.choices[0].message.content
             except Exception as e:
@@ -66,7 +66,7 @@ if not st.session_state.clear_fields:
             st.session_state.new_report = True
             st.rerun()
 
-# Display last report if available
+# Display last report
 if st.session_state.report_history:
     st.markdown("## 📄 Jewelry Report")
     last_report = st.session_state.report_history[-1]
@@ -83,7 +83,7 @@ if st.session_state.report_history:
         st.session_state.session_id = datetime.now().strftime("%Y%m%d%H%M%S")
         st.rerun()
 
-# Scroll to top if new session
+# Scroll to top
 if st.session_state.new_report:
     st.markdown("""
         <script>
