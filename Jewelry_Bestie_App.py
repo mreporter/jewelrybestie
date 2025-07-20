@@ -69,10 +69,38 @@ if not st.session_state.clear_fields:
 
     if st.button("✨ Generate Jewelry Report"):
         if st.session_state.uploaded_files:
+            images_base64 = []
+            for uploaded_file in st.session_state.uploaded_files:
+                bytes_data = uploaded_file.read()
+                encoded = base64.b64encode(bytes_data).decode('utf-8')
+                images_base64.append(encoded)
+
+            prompt = f"Describe this piece of jewelry. Jewelry type: {st.session_state.jewelry_type}. Notes: {st.session_state.user_notes}."
+
+            try:
+                response = openai.ChatCompletion.create(
+                    model="gpt-4-vision-preview",
+                    messages=[
+                        {"role": "user", "content": [
+                            {"type": "text", "text": prompt},
+                            *[
+                                {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{img}"}}
+                                for img in images_base64
+                            ]
+                        ]}
+                    ],
+                    max_tokens=800
+                )
+
+                report_text = response['choices'][0]['message']['content']
+            except Exception as e:
+                report_text = f"Error generating report: {e}"
+
             st.session_state.report_history.append({
                 "images": st.session_state.uploaded_files,
                 "type": st.session_state.jewelry_type,
-                "notes": st.session_state.user_notes
+                "notes": st.session_state.user_notes,
+                "report": report_text
             })
             st.session_state.clear_fields = False
             st.session_state.new_report = True
@@ -86,6 +114,8 @@ if st.session_state.report_history:
         st.image(image, caption="Uploaded Jewelry Image", use_container_width=True)
     st.markdown(f"**Jewelry Type:** {last_report['type']}")
     st.markdown(f"**Notes:** {last_report['notes']}")
+    st.markdown("---")
+    st.markdown(last_report.get("report", "No report available."))
 
     if st.button("Start New Report"):
         st.session_state.clear_fields = True
