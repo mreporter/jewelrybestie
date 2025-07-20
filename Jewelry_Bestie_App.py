@@ -39,7 +39,7 @@ if not st.session_state.clear_fields:
             prompt = f"Describe this piece of jewelry. Jewelry type: {jewelry_type}. Notes: {user_notes}."
 
             try:
-                response = openai.ChatCompletion.create(
+                response = openai.chat.completions.create(
                     model="gpt-4-vision-preview",
                     messages=[
                         {"role": "user", "content": [
@@ -52,7 +52,7 @@ if not st.session_state.clear_fields:
                     ],
                     max_tokens=800
                 )
-                report_text = response['choices'][0]['message']['content']
+                report_text = response.choices[0].message.content
             except Exception as e:
                 report_text = f"Error generating report: {e}"
 
