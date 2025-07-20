@@ -42,6 +42,8 @@ st.write("Your AI-powered best friend for identifying, pricing, and describing j
 # Session state to store history
 if 'report_history' not in st.session_state:
     st.session_state.report_history = []
+if 'image_thumbnails' not in st.session_state:
+    st.session_state.image_thumbnails = []
 
 # Allow multiple image uploads
 uploaded_files = st.file_uploader("Upload one or more photos of your jewelry piece:", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
@@ -57,6 +59,7 @@ generate_report = st.button("✨ Generate Jewelry Report")
 
 if uploaded_files and generate_report:
     images_base64 = []
+    primary_thumbnail = None
 
     for uploaded_file in uploaded_files:
         image = Image.open(uploaded_file)
@@ -84,6 +87,9 @@ if uploaded_files and generate_report:
         img_bytes = buffered.getvalue()
         img_b64 = base64.b64encode(img_bytes).decode()
         images_base64.append(img_b64)
+
+        if not primary_thumbnail:
+            primary_thumbnail = img_b64
 
     st.markdown("---")
     st.write("Analyzing your jewelry pieces with AI magic...")
@@ -175,7 +181,8 @@ if uploaded_files and generate_report:
         with st.expander("📋 Copy Full Listing Info for eBay or Etsy"):
             st.code(raw_text, language='text')
 
-        st.session_state.report_history.append(raw_text)
+        st.session_state.report_history.insert(0, raw_text)
+        st.session_state.image_thumbnails.insert(0, primary_thumbnail)
 
     except Exception as e:
         st.error(f"An error occurred: {str(e)}")
@@ -189,6 +196,7 @@ else:
 if st.session_state.report_history:
     st.markdown("---")
     st.markdown("### 📄 Previous Reports This Session")
-    for i, report in enumerate(st.session_state.report_history, 1):
+    for i, (report, thumb_b64) in enumerate(zip(st.session_state.report_history, st.session_state.image_thumbnails), 1):
         with st.expander(f"Report {i}"):
+            st.image(f"data:image/png;base64,{thumb_b64}", width=100)
             st.code(report, language='text')
