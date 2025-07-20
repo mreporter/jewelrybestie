@@ -42,7 +42,7 @@ if not st.session_state.clear_fields:
 **Materials:** (e.g., enamel, rhinestones, silver tone, plastic, etc.)  
 **Estimated Era or Style:** (e.g., Mid-century, Art Deco, 1980s, etc.)  
 **Detailed Description:** (2-3 sentences describing the design, color, shape, and condition)  
-**Estimated Resale Value Range:** (format like $30–$60 with correct currency symbols)
+**Estimated Resale Value Range:** (format like **$30–$60 USD** with correct bold styling and currency symbols)
 
 Use this input for context if helpful:
 Jewelry Type: {jewelry_type}  
