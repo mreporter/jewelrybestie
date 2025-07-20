@@ -197,16 +197,6 @@ if uploaded_files and generate_report:
         st.session_state.report_history.insert(0, raw_text)
         st.session_state.image_thumbnails.insert(0, primary_thumbnail)
 
-        if st.session_state.report_history:
-            if st.button("Start New Report (Bottom)"):
-                st.session_state.clear_fields = True
-                st.session_state.new_report = True
-                st.session_state.uploaded_files = None
-                st.session_state.jewelry_type = ""
-                st.session_state.user_notes = ""
-                st.success("Ready for a new report! ✨")
-                st.experimental_rerun()
-
     except Exception as e:
         st.error(f"An error occurred: {str(e)}")
 
@@ -226,8 +216,7 @@ if st.session_state.report_history:
             st.image(f"data:image/png;base64,{thumb_b64}", width=100)
             st.code(report, language='text')
 
-    # Add Start New Report button at the bottom if any report exists
-    if st.button("Start New Report (Bottom)"):
+    if st.button("Start New Report"):
         st.session_state.clear_fields = True
         st.session_state.new_report = True
         st.session_state.uploaded_files = None
