@@ -36,16 +36,16 @@ if not st.session_state.clear_fields:
                 encoded = base64.b64encode(bytes_data).decode('utf-8')
                 images_base64.append(encoded)
 
-            prompt = f"""You are a jewelry expert helping a reseller identify and describe pieces. Analyze the image and return a report with the following labeled sections:
+            prompt = f"""You are a jewelry expert helping a reseller identify and describe pieces. Analyze the image and return a detailed report using this format:
 
-Jewelry Type: (e.g., Brooch, Ring, Necklace, etc.)
-Materials: (e.g., enamel, rhinestones, silver tone, plastic, etc.)
-Estimated Era or Style: (e.g., Mid-century, Art Deco, 1980s, etc.)
-Detailed Description: (1–2 sentences describing the design, color, shape, condition, etc.)
-Estimated Resale Value Range: (give a realistic estimate based on online comps in a format like $30–$60)
+**Jewelry Type:** (e.g., Brooch, Ring, Necklace, etc.)  
+**Materials:** (e.g., enamel, rhinestones, silver tone, plastic, etc.)  
+**Estimated Era or Style:** (e.g., Mid-century, Art Deco, 1980s, etc.)  
+**Detailed Description:** (2-3 sentences describing the design, color, shape, and condition)  
+**Estimated Resale Value Range:** (format like $30–$60 with correct currency symbols)
 
 Use this input for context if helpful:
-Jewelry Type: {jewelry_type}
+Jewelry Type: {jewelry_type}  
 Notes: {user_notes}"""
 
             try:
