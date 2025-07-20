@@ -57,6 +57,17 @@ if 'jewelry_type' not in st.session_state:
 if 'user_notes' not in st.session_state:
     st.session_state.user_notes = ""
 
+# Button to clear and start new report (only shows after at least one report exists)
+if st.session_state.report_history:
+    if st.button("Start New Report"):
+        st.session_state.clear_fields = True
+        st.session_state.new_report = True
+        st.session_state.uploaded_files = None
+        st.session_state.jewelry_type = ""
+        st.session_state.user_notes = ""
+        st.success("Ready for a new report! ✨")
+        st.rerun()
+
 # Display Upload and Input Fields
 if not st.session_state.clear_fields:
     st.session_state.uploaded_files = st.file_uploader("Upload one or more photos of your jewelry piece:", type=["jpg", "jpeg", "png"], accept_multiple_files=True, key='file_uploader')
@@ -65,16 +76,6 @@ if not st.session_state.clear_fields:
 
 # Add button to trigger analysis
 generate_report = st.button("✨ Generate Jewelry Report")
-
-# Button to clear and start new report
-if st.button("Start New Report"):
-    st.session_state.clear_fields = True
-    st.session_state.new_report = True
-    st.session_state.uploaded_files = None
-    st.session_state.jewelry_type = ""
-    st.session_state.user_notes = ""
-    st.success("Ready for a new report! ✨")
-    st.experimental_rerun()
 
 uploaded_files = st.session_state.uploaded_files
 jewelry_type = st.session_state.jewelry_type
@@ -225,14 +226,3 @@ if st.session_state.report_history:
         with st.expander(f"Report {display_num}"):
             st.image(f"data:image/png;base64,{thumb_b64}", width=100)
             st.code(report, language='text')
-
-# Move Start New Report button to bottom
-if st.session_state.report_history:
-    st.markdown("---")
-    if st.button("Start New Report (Bottom)"):
-        st.session_state.clear_fields = True
-        st.session_state.new_report = True
-        st.session_state.uploaded_files = None
-        st.session_state.jewelry_type = ""
-        st.session_state.user_notes = ""
-        st.experimental_rerun()
