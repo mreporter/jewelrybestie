@@ -86,11 +86,22 @@ if st.session_state.report_history:
     st.markdown("---")
     st.markdown(last_report.get("report", "No report available."))
 
+    st.code(last_report.get("report", ""), language='markdown')
+
     if st.button("Start New Report"):
         st.session_state.clear_fields = True
         st.session_state.new_report = True
         st.session_state.session_id = datetime.now().strftime("%Y%m%d%H%M%S")
         st.rerun()
+
+    if len(st.session_state.report_history) > 1:
+        st.markdown("## 🔍 Past Reports")
+        for i, report in enumerate(reversed(st.session_state.report_history[:-1])):
+            st.markdown(f"### Report #{len(st.session_state.report_history) - i - 1}")
+            for image in report["images"]:
+                st.image(image, caption="Uploaded Jewelry Image", use_container_width=True)
+            st.markdown(report.get("report", "No report available."))
+            st.markdown("---")
 
 # Scroll to top
 if st.session_state.new_report:
