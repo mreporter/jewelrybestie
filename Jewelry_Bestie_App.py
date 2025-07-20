@@ -189,6 +189,6 @@ else:
 if st.session_state.report_history:
     st.markdown("---")
     st.markdown("### 📄 Previous Reports This Session")
-    for i, report in enumerate(st.session_state.report_history[::-1], 1):
+    for i, report in enumerate(st.session_state.report_history, 1):
         with st.expander(f"Report {i}"):
             st.code(report, language='text')
