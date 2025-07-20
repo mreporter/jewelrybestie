@@ -79,20 +79,24 @@ uploaded_files = st.session_state.uploaded_files
 jewelry_type = st.session_state.jewelry_type
 user_notes = st.session_state.user_notes
 
+# Show success when a new report is ready
+if generate_report and uploaded_files:
+    st.success("🎉 Your jewelry report is ready! Scroll down to view your results.")
+    st.markdown("<a name='scroll-to-top'></a>", unsafe_allow_html=True)
+    st.session_state.report_history.append({
+        "images": uploaded_files,
+        "type": jewelry_type,
+        "notes": user_notes
+    })
+    st.session_state.clear_fields = False
+
 # Start New Report Button (only after a report has been generated)
 if st.session_state.report_history:
-    if st.button("Start New Report", key="start_new_report"):
+    if st.button("Start New Report"):
         st.session_state.clear_fields = True
         st.session_state.new_report = True
         st.session_state.uploaded_files = None
         st.session_state.jewelry_type = ""
         st.session_state.user_notes = ""
         st.session_state.session_id = datetime.now().strftime("%Y%m%d%H%M%S")
-        st.success("Ready for a new report! ✨")
-        st.rerun()
-
-# Show celebration when a new report is ready
-if generate_report and uploaded_files:
-    st.balloons()
-    st.success("🎉 Your jewelry report is ready! Scroll down to view your results.")
-    st.markdown("<a name='scroll-to-top'></a>", unsafe_allow_html=True)
+        st.experimental_rerun()
