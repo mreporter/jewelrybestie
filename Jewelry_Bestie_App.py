@@ -36,7 +36,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-st.title(":scroll: Jewelry Bestie")
+st.title("💎 Jewelry Bestie")
 st.write("Your AI-powered best friend for identifying, pricing, and describing jewelry.")
 
 # Session state to store history
@@ -63,26 +63,20 @@ if 'user_notes' not in st.session_state:
 
 # Display Upload and Input Fields
 if not st.session_state.clear_fields:
-    st.session_state.uploaded_files = st.file_uploader("Upload one or more photos of your jewelry piece:", type=["jpg", "jpeg", "png"], accept_multiple_files=True, key=f'file_uploader_{st.session_state.session_id}')
-    st.session_state.jewelry_type = st.selectbox("Optional: Select the type of jewelry (if known):", ["", "Earrings", "Ring", "Bracelet", "Brooch", "Pendant", "Necklace", "Set (e.g., Brooch and Earrings)"], key=f'type_selector_{st.session_state.session_id}')
-    st.session_state.user_notes = st.text_area("Optional: Add any notes about the piece (e.g., markings, brand name, where it was purchased, etc.):", key=f'notes_area_{st.session_state.session_id}')
+    uploaded_files = st.file_uploader("Upload one or more photos of your jewelry piece:", type=["jpg", "jpeg", "png"], accept_multiple_files=True, key=f'file_uploader_{st.session_state.session_id}')
+    jewelry_type = st.selectbox("Optional: Select the type of jewelry (if known):", ["", "Earrings", "Ring", "Bracelet", "Brooch", "Pendant", "Necklace", "Set (e.g., Brooch and Earrings)"], key=f'type_selector_{st.session_state.session_id}')
+    user_notes = st.text_area("Optional: Add any notes about the piece (e.g., markings, brand name, where it was purchased, etc.):", key=f'notes_area_{st.session_state.session_id}')
 
-    # Add button to trigger analysis
     if st.button("✨ Generate Jewelry Report"):
-        st.session_state.trigger_report_generation = True
-
-# Process report generation
-if st.session_state.trigger_report_generation:
-    uploaded_files = st.session_state.uploaded_files
-    if uploaded_files:
-        st.session_state.report_history.append({
-            "images": uploaded_files,
-            "type": st.session_state.jewelry_type,
-            "notes": st.session_state.user_notes
-        })
-        st.session_state.clear_fields = False
-        st.session_state.trigger_report_generation = False
-        st.experimental_rerun()
+        if uploaded_files:
+            st.session_state.report_history.append({
+                "images": uploaded_files,
+                "type": jewelry_type,
+                "notes": user_notes
+            })
+            st.session_state.clear_fields = False
+            st.session_state.new_report = False
+            st.experimental_set_query_params(rerun="1")
 
 # Display last report if available
 if st.session_state.report_history:
@@ -93,7 +87,6 @@ if st.session_state.report_history:
     st.markdown(f"**Jewelry Type:** {last_report['type']}")
     st.markdown(f"**Notes:** {last_report['notes']}")
 
-    # Start New Report Button (only after a report has been generated)
     if st.button("Start New Report"):
         st.session_state.clear_fields = True
         st.session_state.new_report = True
@@ -101,9 +94,9 @@ if st.session_state.report_history:
         st.session_state.jewelry_type = ""
         st.session_state.user_notes = ""
         st.session_state.session_id = datetime.now().strftime("%Y%m%d%H%M%S")
-        st.experimental_rerun()
+        st.experimental_set_query_params(reset="1")
 
-# Scroll to top for a new session
+# Scroll to top if new session
 if st.session_state.new_report:
     st.markdown("""
         <script>
