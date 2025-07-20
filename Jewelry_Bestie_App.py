@@ -196,7 +196,9 @@ else:
 if st.session_state.report_history:
     st.markdown("---")
     st.markdown("### 📄 Previous Reports This Session")
-    for i, (report, thumb_b64) in enumerate(zip(st.session_state.report_history, st.session_state.image_thumbnails), 1):
-        with st.expander(f"Report {i}"):
+    total_reports = len(st.session_state.report_history)
+    for i, (report, thumb_b64) in enumerate(zip(st.session_state.report_history, st.session_state.image_thumbnails)):
+        display_num = total_reports - i
+        with st.expander(f"Report {display_num}"):
             st.image(f"data:image/png;base64,{thumb_b64}", width=100)
             st.code(report, language='text')
