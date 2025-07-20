@@ -76,7 +76,7 @@ if not st.session_state.clear_fields:
             })
             st.session_state.clear_fields = False
             st.session_state.new_report = False
-            st.query_params = {"rerun": "1"}  # Updated to st.query_params
+            st.query_params = {"rerun": "1"}
 
 # Display last report if available
 if st.session_state.report_history:
@@ -94,7 +94,7 @@ if st.session_state.report_history:
         st.session_state.jewelry_type = ""
         st.session_state.user_notes = ""
         st.session_state.session_id = datetime.now().strftime("%Y%m%d%H%M%S")
-        st.query_params = {"reset": "1"}  # Updated to st.query_params
+        st.query_params = {"reset": "1"}
 
 # Scroll to top if new session
 if st.session_state.new_report:
