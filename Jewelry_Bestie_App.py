@@ -46,10 +46,13 @@ if 'image_thumbnails' not in st.session_state:
     st.session_state.image_thumbnails = []
 if 'clear_fields' not in st.session_state:
     st.session_state.clear_fields = False
+if 'new_report' not in st.session_state:
+    st.session_state.new_report = False
 
-# Clear fields logic
 if st.button("Start New Report"):
     st.session_state.clear_fields = True
+    st.session_state.new_report = True
+    st.success("Ready for a new report! ✨")
 
 if st.session_state.clear_fields:
     uploaded_files = None
@@ -57,9 +60,9 @@ if st.session_state.clear_fields:
     user_notes = ""
     st.session_state.clear_fields = False
 else:
-    uploaded_files = st.file_uploader("Upload one or more photos of your jewelry piece:", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
-    jewelry_type = st.selectbox("Optional: Select the type of jewelry (if known):", ["", "Earrings", "Ring", "Bracelet", "Brooch", "Pendant", "Necklace", "Set (e.g., Brooch and Earrings)"])
-    user_notes = st.text_area("Optional: Add any notes about the piece (e.g., markings, brand name, where it was purchased, etc.):")
+    uploaded_files = st.file_uploader("Upload one or more photos of your jewelry piece:", type=["jpg", "jpeg", "png"], accept_multiple_files=True, key='file_uploader')
+    jewelry_type = st.selectbox("Optional: Select the type of jewelry (if known):", ["", "Earrings", "Ring", "Bracelet", "Brooch", "Pendant", "Necklace", "Set (e.g., Brooch and Earrings)"], key='type_selector')
+    user_notes = st.text_area("Optional: Add any notes about the piece (e.g., markings, brand name, where it was purchased, etc.):", key='notes_area')
 
 # Add button to trigger analysis
 generate_report = st.button("✨ Generate Jewelry Report")
