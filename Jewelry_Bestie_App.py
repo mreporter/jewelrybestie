@@ -49,20 +49,21 @@ Jewelry Type: {jewelry_type}
 Notes: {user_notes}"""
 
             try:
-                response = openai.chat.completions.create(
-                    model="gpt-4o",
-                    messages=[
-                        {"role": "user", "content": [
-                            {"type": "text", "text": prompt},
-                            *[
-                                {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{img}"}}
-                                for img in images_base64
-                            ]
-                        ]}
-                    ],
-                    max_tokens=1500
-                )
-                report_text = response.choices[0].message.content
+                with st.spinner("Analyzing your jewelry with AI magic..."):
+                    response = openai.chat.completions.create(
+                        model="gpt-4o",
+                        messages=[
+                            {"role": "user", "content": [
+                                {"type": "text", "text": prompt},
+                                *[
+                                    {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{img}"}}
+                                    for img in images_base64
+                                ]
+                            ]}
+                        ],
+                        max_tokens=1500
+                    )
+                    report_text = response.choices[0].message.content
             except Exception as e:
                 report_text = f"Error generating report: {e}"
 
