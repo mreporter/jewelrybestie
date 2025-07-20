@@ -36,7 +36,17 @@ if not st.session_state.clear_fields:
                 encoded = base64.b64encode(bytes_data).decode('utf-8')
                 images_base64.append(encoded)
 
-            prompt = f"Describe this piece of jewelry. Jewelry type: {jewelry_type}. Notes: {user_notes}."
+            prompt = f"You are a jewelry expert helping a reseller identify and describe pieces. Analyze the image and return a report with the following labeled sections:
+
+Jewelry Type: (e.g., Brooch, Ring, Necklace, etc.)
+Materials: (e.g., enamel, rhinestones, silver tone, plastic, etc.)
+Estimated Era or Style: (e.g., Mid-century, Art Deco, 1980s, etc.)
+Detailed Description: (1–2 sentences describing the design, color, shape, condition, etc.)
+Estimated Resale Value Range: (give a realistic estimate based on online comps)
+
+Use this input for context if helpful:
+Jewelry Type: {jewelry_type}
+Notes: {user_notes}"
 
             try:
                 response = openai.chat.completions.create(
@@ -50,7 +60,7 @@ if not st.session_state.clear_fields:
                             ]
                         ]}
                     ],
-                    max_tokens=1000
+                    max_tokens=1500
                 )
                 report_text = response.choices[0].message.content
             except Exception as e:
