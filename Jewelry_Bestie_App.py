@@ -75,14 +75,14 @@ if not st.session_state.clear_fields:
                 "notes": st.session_state.user_notes
             })
             st.session_state.clear_fields = False
-            st.rerun()
+            st.experimental_rerun()
 
 # Display last report if available
 if st.session_state.report_history:
     last_report = st.session_state.report_history[-1]
     st.markdown("## 📄 Jewelry Report")
     for image in last_report["images"]:
-        st.image(image, caption="Uploaded Jewelry Image", use_column_width=True)
+        st.image(image, caption="Uploaded Jewelry Image", use_container_width=True)
     st.markdown(f"**Jewelry Type:** {last_report['type']}")
     st.markdown(f"**Notes:** {last_report['notes']}")
 
@@ -94,4 +94,4 @@ if st.session_state.report_history:
         st.session_state.jewelry_type = ""
         st.session_state.user_notes = ""
         st.session_state.session_id = datetime.now().strftime("%Y%m%d%H%M%S")
-        st.rerun()
+        st.experimental_rerun()
