@@ -38,14 +38,14 @@ if not st.session_state.clear_fields:
 
             prompt = f"""You are a jewelry expert helping a reseller identify and describe pieces. Analyze the image and return a detailed report using this format:
 
-**Jewelry Type:** (e.g., Brooch, Ring, Necklace, etc.)  
-**Materials:** (e.g., enamel, rhinestones, silver tone, plastic, etc.)  
-**Estimated Era or Style:** (e.g., Mid-century, Art Deco, 1980s, etc.)  
-**Detailed Description:** (2-3 sentences describing the design, color, shape, and condition)  
-**Estimated Resale Value Range:** (format like **$30–$60 USD** with correct bold styling and currency symbols)
+Type: (e.g., Brooch, Ring, Necklace, etc.)
+Style and Era: (e.g., Mid-century, 1950s, Art Deco, 1980s, etc.)
+Materials: (e.g., enamel, rhinestones, silver tone, plastic, etc.)
+Details: (2-3 sentences describing the design, color, shape, and condition)
+Estimated Resale Price: Please return only a clean range like this — $30 to $60 USD — without using any symbols like “\” or markdown formatting.
 
 Use this input for context if helpful:
-Jewelry Type: {jewelry_type}  
+Jewelry Type: {jewelry_type}
 Notes: {user_notes}"""
 
             try:
@@ -96,7 +96,7 @@ if st.session_state.report_history:
         st.rerun()
 
     if len(st.session_state.report_history) > 1:
-        st.markdown("## 🔍 Past Reports")
+        st.markdown("## 🔍 Previous Reports")
         for i, report in enumerate(reversed(st.session_state.report_history[:-1])):
             st.markdown(f"### Report #{len(st.session_state.report_history) - i - 1}")
             for image in report["images"]:
