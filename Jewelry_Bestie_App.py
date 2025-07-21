@@ -3,6 +3,7 @@ import openai
 import base64
 from PIL import Image
 from datetime import datetime
+import re
 
 # Set OpenAI API key
 openai.api_key = st.secrets["OPENAI_API_KEY"]
@@ -64,6 +65,7 @@ Notes: {user_notes}"""
                         max_tokens=1500
                     )
                     report_text = response.choices[0].message.content
+                    report_text = re.sub(r"(?<=Estimated Resale Value Range:\s)(\d+)[–-](\d+)(\sUSD)", r"$–$ USD", report_text)
             except Exception as e:
                 report_text = f"Error generating report: {e}"
 
