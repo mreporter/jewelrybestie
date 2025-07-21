@@ -65,7 +65,8 @@ Notes: {user_notes}"""
                         max_tokens=1500
                     )
                     report_text = response.choices[0].message.content
-                    report_text = re.sub(r"(?<=Estimated Resale Value Range:\s)(\d+)[–-](\d+)(\sUSD)", r"$–$ USD", report_text)
+                    report_text = re.sub(r"(?<=Estimated Resale Value Range:\s)(\d+)[–-](\d+)(\sUSD)", r"$\1–$\2 USD", report_text)
+                    report_text = re.sub(r"(?<=Estimated Resale Value Range:\s)\$(\d+)[–-]\$(\d+)(\sUSD)", r"$\1–$\2 USD", report_text)
             except Exception as e:
                 report_text = f"Error generating report: {e}"
 
