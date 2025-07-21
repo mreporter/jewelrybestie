@@ -101,7 +101,7 @@ Notes: {user_notes}"""
                         flags=re.IGNORECASE
                     )
                     report_text = re.sub(
-                        r"(Estimated Resale Value Range:\s*)\$?(\d+)[–-]\$?(\d+)",
+                        r"(Estimated Resale Value Range:\s*)\$?(\d+)\s*[–-]\s*\$?(\d+)",
                         lambda m: f"{m.group(1)}${int(m.group(2))}–${int(m.group(3))} USD",
                         report_text,
                         flags=re.IGNORECASE
