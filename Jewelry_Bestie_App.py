@@ -1,7 +1,7 @@
 import streamlit as st
 import openai
 import base64
-from PIL import Image
+from PIL import Image, ExifTags
 from datetime import datetime
 import re
 
@@ -23,6 +23,24 @@ if 'new_report' not in st.session_state:
 if 'session_id' not in st.session_state:
     st.session_state.session_id = datetime.now().strftime("%Y%m%d%H%M%S")
 
+def fix_image_orientation(image):
+    try:
+        for orientation in ExifTags.TAGS.keys():
+            if ExifTags.TAGS[orientation] == 'Orientation':
+                break
+        exif = image._getexif()
+        if exif is not None:
+            orientation_value = exif.get(orientation, None)
+            if orientation_value == 3:
+                image = image.rotate(180, expand=True)
+            elif orientation_value == 6:
+                image = image.rotate(270, expand=True)
+            elif orientation_value == 8:
+                image = image.rotate(90, expand=True)
+    except Exception:
+        pass
+    return image
+
 # Upload UI
 if not st.session_state.clear_fields:
     uploaded_files = st.file_uploader("Upload one or more photos of your jewelry piece:", type=["jpg", "jpeg", "png"], accept_multiple_files=True, key=f'file_uploader_{st.session_state.session_id}')
@@ -32,8 +50,15 @@ if not st.session_state.clear_fields:
     if st.button("✨ Generate Jewelry Report"):
         if uploaded_files:
             images_base64 = []
+            fixed_images = []
             for uploaded_file in uploaded_files:
-                bytes_data = uploaded_file.read()
+                image = Image.open(uploaded_file)
+                image = fix_image_orientation(image)
+                fixed_images.append(image)
+                with open("temp.jpg", "wb") as f:
+                    image.save(f, format="JPEG")
+                with open("temp.jpg", "rb") as f:
+                    bytes_data = f.read()
                 encoded = base64.b64encode(bytes_data).decode('utf-8')
                 images_base64.append(encoded)
 
@@ -74,7 +99,7 @@ Notes: {user_notes}"""
                 report_text = f"Error generating report: {e}"
 
             st.session_state.report_history.append({
-                "images": uploaded_files,
+                "images": fixed_images,
                 "type": jewelry_type,
                 "notes": user_notes,
                 "report": report_text
