@@ -42,7 +42,7 @@ if not st.session_state.clear_fields:
 **Materials:** (e.g., enamel, rhinestones, silver tone, plastic, etc.)  
 **Estimated Era or Style:** (e.g., Mid-century, Art Deco, 1980s, etc.)  
 **Detailed Description:** (2-3 sentences describing the design, color, shape, and condition)  
-**Estimated Resale Value Range:** (format like **\$30–\$60 USD** with correct bold styling and currency symbols)
+**Estimated Resale Value Range:** (format like **$30–$60 USD** with correct bold styling and currency symbols)
 
 Use this input for context if helpful:
 Jewelry Type: {jewelry_type}  
@@ -84,10 +84,10 @@ if st.session_state.report_history:
     for image in last_report["images"]:
         st.image(image, caption="Uploaded Jewelry Image", use_container_width=True)
     st.markdown("---")
-    st.markdown(last_report.get("report", "No report available.").replace("$", "\$"))
+    st.markdown(last_report.get("report", "No report available."))
 
-    with st.expander("📋 Copy report for eBay or Etsy"):
-        st.code(last_report.get("report", "").replace("$", "\$"), language='markdown')
+    with st.expander("🗓️ Copy report for eBay or Etsy"):
+        st.code(last_report.get("report", ""), language='markdown')
 
     if st.button("Start New Report"):
         st.session_state.clear_fields = True
@@ -101,7 +101,7 @@ if st.session_state.report_history:
             st.markdown(f"### Report #{len(st.session_state.report_history) - i - 1}")
             for image in report["images"]:
                 st.image(image, caption="Uploaded Jewelry Image", use_container_width=True)
-            st.markdown(report.get("report", "No report available.").replace("$", "\$"))
+            st.markdown(report.get("report", "No report available."))
             st.markdown("---")
 
 # Scroll to top
