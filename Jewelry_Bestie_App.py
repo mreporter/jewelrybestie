@@ -38,11 +38,11 @@ if not st.session_state.clear_fields:
 
             prompt = f"""You are a jewelry expert helping a reseller identify and describe pieces. Analyze the image and return a detailed report using this format:
 
-Type: (e.g., Brooch, Ring, Necklace, etc.)
-Style and Era: (e.g., Mid-century, 1950s, Art Deco, 1980s, etc.)
+Jewelry Type: (e.g., Brooch, Ring, Necklace, etc.)
 Materials: (e.g., enamel, rhinestones, silver tone, plastic, etc.)
-Details: (2-3 sentences describing the design, color, shape, and condition)
-Estimated Resale Price: Please return only a clean range like this — $30 to $60 USD — without using any symbols like “\” or markdown formatting.
+Estimated Era or Style: (e.g., Mid-century, 1950s, Art Deco, 1980s, etc.)
+Detailed Description: (2–3 sentences describing the design, color, shape, and condition)
+Estimated Resale Value Range: (Return using proper currency format like this — $40–$70 USD — with no markdown or escape characters)
 
 Use this input for context if helpful:
 Jewelry Type: {jewelry_type}
