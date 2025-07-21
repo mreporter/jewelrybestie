@@ -94,7 +94,18 @@ Notes: {user_notes}"""
                         max_tokens=1500
                     )
                     report_text = response.choices[0].message.content
-                    report_text = re.sub(r"(?<=Estimated Resale Value Range:\s)\$?(\d+)[\u2013-]\$?(\d+)(\sUSD)", lambda m: f"${int(m.group(1))}–${int(m.group(2))} USD", report_text)
+                    report_text = re.sub(
+                        r"(Estimated Resale Value Range:\s*)\$?(\d+)[–-]\$?(\d+)\s*USD",
+                        lambda m: f"{m.group(1)}${int(m.group(2))}–${int(m.group(3))} USD",
+                        report_text,
+                        flags=re.IGNORECASE
+                    )
+                    report_text = re.sub(
+                        r"(Estimated Resale Value Range:\s*)\$?(\d+)[–-]\$?(\d+)",
+                        lambda m: f"{m.group(1)}${int(m.group(2))}–${int(m.group(3))} USD",
+                        report_text,
+                        flags=re.IGNORECASE
+                    )
             except Exception as e:
                 report_text = f"Error generating report: {e}"
 
