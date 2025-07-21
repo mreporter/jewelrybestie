@@ -1,5 +1,5 @@
 import streamlit as st
-from PIL import Image, UnidentifiedImageError
+from PIL import Image, ExifTags, UnidentifiedImageError
 import io
 
 st.set_page_config(page_title="Jewelry Bestie - AI Jewelry Identifier", layout="centered")
@@ -8,9 +8,26 @@ st.caption("Your AI powered best friend for identifying, pricing, and describing
 
 uploaded_file = st.file_uploader("Upload a photo of the jewelry", type=["jpg", "jpeg", "png"])
 
+def correct_image_orientation(image):
+    try:
+        for orientation in ExifTags.TAGS.keys():
+            if ExifTags.TAGS[orientation] == 'Orientation':
+                break
+        exif = dict(image._getexif().items())
+        if exif[orientation] == 3:
+            image = image.rotate(180, expand=True)
+        elif exif[orientation] == 6:
+            image = image.rotate(270, expand=True)
+        elif exif[orientation] == 8:
+            image = image.rotate(90, expand=True)
+    except Exception:
+        pass
+    return image
+
 if uploaded_file:
     try:
         image = Image.open(uploaded_file)
+        image = correct_image_orientation(image)
         st.image(image, caption="Uploaded Jewelry Image", use_container_width=True)
 
         # Simulated AI response (to be replaced with actual model/API call)
