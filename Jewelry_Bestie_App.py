@@ -4,14 +4,14 @@ import io
 
 st.set_page_config(page_title="Jewelry Bestie - AI Jewelry Identifier", layout="centered")
 st.title("Jewelry Bestie")
-st.caption("Your AI-powered assistant for identifying and pricing jewelry")
+st.caption("Your AI powered best friend for identifying, pricing, and describing jewelry.")
 
 uploaded_file = st.file_uploader("Upload a photo of the jewelry", type=["jpg", "jpeg", "png"])
 
 if uploaded_file:
     try:
         image = Image.open(uploaded_file)
-        st.image(image, caption="Uploaded Jewelry Image", use_column_width=True)
+        st.image(image, caption="Uploaded Jewelry Image", use_container_width=True)
 
         # Simulated AI response (to be replaced with actual model/API call)
         jewelry_type = "Brooch and Earrings Set"
@@ -29,7 +29,7 @@ if uploaded_file:
         st.markdown(f"**Materials:** {materials}")
         st.markdown(f"**Estimated Era or Style:** {era_style}")
         st.markdown(f"**Detailed Description:** {description}")
-        st.markdown(f"**Estimated Resale Value Range:** ${price_min}–${price_max} USD")
+        st.markdown(f"**Estimated Resale Value Range:** \${price_min}–\${price_max} USD")
 
     except UnidentifiedImageError:
         st.error("The uploaded file could not be identified as an image. Please upload a valid image file.")
