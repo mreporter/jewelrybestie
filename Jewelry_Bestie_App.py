@@ -61,6 +61,7 @@ if st.session_state.generate_report:
             "pattern with a glossy finish. The items appear to be in good vintage condition with no visible signs of significant wear."
         )
         price_min, price_max = 50, 80
+        price_range = f"${price_min}–${price_max} USD"
 
         report_data = {
             "images": report_images,
@@ -68,7 +69,7 @@ if st.session_state.generate_report:
             "Materials": materials,
             "Estimated Era or Style": era_style,
             "Detailed Description": description,
-            "Estimated Resale Value Range": f"${price_min}–${price_max} USD"
+            "Estimated Resale Value Range": price_range
         }
 
         st.session_state.report_history.insert(0, report_data)
@@ -78,7 +79,7 @@ if st.session_state.generate_report:
         st.markdown(f"**Materials:** {materials}")
         st.markdown(f"**Estimated Era or Style:** {era_style}")
         st.markdown(f"**Detailed Description:** {description}")
-        st.markdown(f"**Estimated Resale Value Range:** ${price_min}–${price_max} USD")
+        st.markdown(f"**Estimated Resale Value Range:** {price_range}")
 
         if st.button("Start New Report"):
             st.session_state.generate_report = False
