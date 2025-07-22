@@ -6,11 +6,16 @@ st.set_page_config(page_title="Jewelry Bestie - AI Jewelry Identifier", layout="
 st.title("Jewelry Bestie")
 st.caption("Your AI powered best friend for identifying, pricing, and describing jewelry.")
 
-st.markdown("Upload up to 20 photos of your jewelry for AI powered identification results.")
+if "report_history" not in st.session_state:
+    st.session_state.report_history = []
+if "current_images" not in st.session_state:
+    st.session_state.current_images = []
 
-uploaded_files = st.file_uploader("Upload photos", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
+if "generate_report" not in st.session_state:
+    st.session_state.generate_report = False
 
-generate_report = st.button("Generate Jewelry Report")
+if "reset" not in st.session_state:
+    st.session_state.reset = False
 
 def correct_image_orientation(image):
     try:
@@ -28,11 +33,29 @@ def correct_image_orientation(image):
         pass
     return image
 
-if generate_report and uploaded_files:
-    for uploaded_file in uploaded_files:
+if st.button("Start New Report"):
+    st.session_state.generate_report = False
+    st.session_state.current_images = []
+    st.session_state.reset = True
+
+if not st.session_state.generate_report:
+    st.markdown("Upload up to 20 photos of your jewelry for AI powered identification results.")
+    uploaded_files = st.file_uploader("Upload photos", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
+
+    if uploaded_files:
+        st.session_state.current_images = uploaded_files
+
+    if st.button("Generate Jewelry Report") and st.session_state.current_images:
+        st.session_state.generate_report = True
+        st.session_state.reset = False
+
+if st.session_state.generate_report:
+    report_images = []
+    for uploaded_file in st.session_state.current_images:
         image = Image.open(uploaded_file)
         image = correct_image_orientation(image)
         st.image(image, caption="Uploaded Jewelry Image", use_container_width=True)
+        report_images.append(uploaded_file.name)
 
     try:
         # Simulated AI response (to be replaced with actual model/API call)
@@ -46,6 +69,17 @@ if generate_report and uploaded_files:
         )
         price_min, price_max = 50, 80
 
+        report_data = {
+            "images": report_images,
+            "Jewelry Type": jewelry_type,
+            "Materials": materials,
+            "Estimated Era or Style": era_style,
+            "Detailed Description": description,
+            "Estimated Resale Value Range": f"${price_min}–${price_max} USD"
+        }
+
+        st.session_state.report_history.insert(0, report_data)
+
         st.markdown("---")
         st.markdown(f"**Jewelry Type:** {jewelry_type}")
         st.markdown(f"**Materials:** {materials}")
@@ -58,5 +92,14 @@ if generate_report and uploaded_files:
     except Exception as e:
         st.error(f"An unexpected error occurred: {e}")
 
-st.markdown("---")
-st.button("Start New Report")
+if st.session_state.report_history:
+    st.markdown("---")
+    st.subheader("Previous Reports")
+    for idx, report in enumerate(st.session_state.report_history):
+        with st.expander(f"Report {idx + 1}"):
+            for key, value in report.items():
+                if key == "images":
+                    for image_name in value:
+                        st.text(f"Image: {image_name}")
+                else:
+                    st.markdown(f"**{key}:** {value}")
