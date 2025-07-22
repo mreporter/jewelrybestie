@@ -3,7 +3,7 @@ from PIL import Image, ExifTags, UnidentifiedImageError
 import io
 
 st.set_page_config(page_title="Jewelry Bestie - AI Jewelry Identifier", layout="centered")
-st.title("Jewelry Bestie")
+st.title("💎 Jewelry Bestie")
 st.caption("Your AI powered best friend for identifying, pricing, and describing jewelry.")
 
 if "report_history" not in st.session_state:
@@ -41,6 +41,8 @@ if not st.session_state.generate_report:
     if st.button("Generate Jewelry Report"):
         st.session_state.generate_report = True
         st.session_state.reset = False
+        with st.spinner("🔍 Analyzing your jewelry with AI-powered tools... Please wait."):
+            st.experimental_rerun()
 
 if st.session_state.generate_report:
     report_images = []
@@ -61,7 +63,7 @@ if st.session_state.generate_report:
             "pattern with a glossy finish. The items appear to be in good vintage condition with no visible signs of significant wear."
         )
         price_min, price_max = 50, 80
-        price_range = f"${price_min}–${price_max} USD"
+        price_range = f"${price_min:,}–${price_max:,} USD"
 
         report_data = {
             "images": report_images,
