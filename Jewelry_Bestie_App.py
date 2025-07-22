@@ -38,9 +38,12 @@ if not st.session_state.generate_report:
     if uploaded_files:
         st.session_state.current_images = uploaded_files
 
-    if st.button("Generate Jewelry Report") and st.session_state.current_images:
-        st.session_state.generate_report = True
-        st.session_state.reset = False
+    st.button("Generate Jewelry Report", key="generate_button")
+
+    if st.session_state.current_images and st.session_state.generate_report == False:
+        if st.button("Click to Generate Report"):
+            st.session_state.generate_report = True
+            st.session_state.reset = False
 
 if st.session_state.generate_report:
     report_images = []
@@ -68,7 +71,7 @@ if st.session_state.generate_report:
             "Materials": materials,
             "Estimated Era or Style": era_style,
             "Detailed Description": description,
-            "Estimated Resale Value Range": f"${price_min}–${price_max} USD"
+            "Estimated Resale Value Range": f"\${price_min}–\${price_max} USD"
         }
 
         st.session_state.report_history.insert(0, report_data)
@@ -100,4 +103,7 @@ if st.session_state.report_history:
                     for image_name in value:
                         st.text(f"Image: {image_name}")
                 else:
-                    st.markdown(f"**{key}:** {value}")
+                    if key == "Estimated Resale Value Range":
+                        st.markdown(f"**{key}:** {value}")
+                    else:
+                        st.markdown(f"**{key}:** {value}")
