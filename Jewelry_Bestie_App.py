@@ -10,10 +10,8 @@ if "report_history" not in st.session_state:
     st.session_state.report_history = []
 if "current_images" not in st.session_state:
     st.session_state.current_images = []
-
 if "generate_report" not in st.session_state:
     st.session_state.generate_report = False
-
 if "reset" not in st.session_state:
     st.session_state.reset = False
 
@@ -32,11 +30,6 @@ def correct_image_orientation(image):
     except Exception:
         pass
     return image
-
-if st.button("Start New Report"):
-    st.session_state.generate_report = False
-    st.session_state.current_images = []
-    st.session_state.reset = True
 
 if not st.session_state.generate_report:
     st.markdown("Upload up to 20 photos of your jewelry for AI powered identification results.")
@@ -86,6 +79,11 @@ if st.session_state.generate_report:
         st.markdown(f"**Estimated Era or Style:** {era_style}")
         st.markdown(f"**Detailed Description:** {description}")
         st.markdown(f"**Estimated Resale Value Range:** \${price_min}–\${price_max} USD")
+
+        if st.button("Start New Report"):
+            st.session_state.generate_report = False
+            st.session_state.current_images = []
+            st.session_state.reset = True
 
     except UnidentifiedImageError:
         st.error("The uploaded file could not be identified as an image. Please upload a valid image file.")
