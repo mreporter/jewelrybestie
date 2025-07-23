@@ -42,7 +42,7 @@ if not st.session_state.generate_report:
         st.session_state.generate_report = True
         st.session_state.reset = False
         with st.spinner("🔍 Analyzing your jewelry with AI-powered tools... Please wait."):
-            st.experimental_rerun()
+            st.rerun()
 
 if st.session_state.generate_report:
     report_images = []
