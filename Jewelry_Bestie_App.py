@@ -46,11 +46,14 @@ if not st.session_state.generate_report:
 
 if st.session_state.generate_report:
     report_images = []
-    for uploaded_file in st.session_state.current_images:
+    thumbnail = None
+    for i, uploaded_file in enumerate(st.session_state.current_images):
         image = Image.open(uploaded_file)
         image = correct_image_orientation(image)
         st.image(image, caption="Uploaded Jewelry Image", use_container_width=True)
         report_images.append(uploaded_file.name)
+        if i == 0:
+            thumbnail = uploaded_file.name
 
     try:
         # Simulated AI response (to be replaced with actual model/API call)
@@ -63,9 +66,10 @@ if st.session_state.generate_report:
             "pattern with a glossy finish. The items appear to be in good vintage condition with no visible signs of significant wear."
         )
         price_min, price_max = 50, 80
-        price_range = f"\${price_min:,}–\${price_max:,} USD"
+        price_range = f"${price_min:,}–${price_max:,} USD"
 
         report_data = {
+            "thumbnail": thumbnail,
             "images": report_images,
             "Jewelry Type": jewelry_type,
             "Materials": materials,
@@ -98,9 +102,11 @@ if st.session_state.report_history:
     st.subheader("Previous Reports")
     for idx, report in enumerate(st.session_state.report_history):
         with st.expander(f"Report {idx + 1}"):
+            if "thumbnail" in report:
+                st.markdown(f"![Thumbnail](https://via.placeholder.com/150?text={report['thumbnail']})")
             for key, value in report.items():
                 if key == "images":
                     for image_name in value:
                         st.text(f"Image: {image_name}")
-                else:
+                elif key != "thumbnail":
                     st.markdown(f"**{key}:** {value}")
