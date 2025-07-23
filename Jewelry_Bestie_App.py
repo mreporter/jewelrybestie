@@ -36,13 +36,13 @@ if not st.session_state.generate_report:
     uploaded_files = st.file_uploader("Upload photos", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
 
     if uploaded_files:
-        st.session_state.current_images = uploaded_files
+        st.session_state.current_images = uploaded_files[:20]  # Limit to 20 files
 
     if st.button("Generate Jewelry Report"):
         st.session_state.generate_report = True
         st.session_state.reset = False
         with st.spinner("\U0001F50D Analyzing your jewelry with AI-powered tools... Please wait."):
-            st.experimental_rerun()
+            st.rerun()
 
 if st.session_state.generate_report:
     report_images = []
@@ -103,7 +103,7 @@ if st.session_state.report_history:
     for idx, report in enumerate(st.session_state.report_history):
         with st.expander(f"Report {idx + 1}"):
             if "thumbnail" in report:
-                st.image(f"https://via.placeholder.com/150?text={report['thumbnail']}", caption="Thumbnail", width=100)
+                st.image(f"https://via.placeholder.com/100?text={report['thumbnail']}", caption="Thumbnail", width=75)
             for key, value in report.items():
                 if key == "images":
                     for image_name in value:
