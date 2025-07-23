@@ -47,6 +47,7 @@ if not st.session_state.generate_report:
 if st.session_state.generate_report:
     report_images = []
     thumbnail = None
+    thumbnail_image = None
     for i, uploaded_file in enumerate(st.session_state.current_images):
         image = Image.open(uploaded_file)
         image = correct_image_orientation(image)
@@ -54,6 +55,7 @@ if st.session_state.generate_report:
         report_images.append(uploaded_file.name)
         if i == 0:
             thumbnail = uploaded_file.name
+            thumbnail_image = uploaded_file.getvalue()
 
     try:
         # Simulated AI response (to be replaced with actual model/API call)
@@ -70,6 +72,7 @@ if st.session_state.generate_report:
 
         report_data = {
             "thumbnail": thumbnail,
+            "thumbnail_image": thumbnail_image,
             "images": report_images,
             "Jewelry Type": jewelry_type,
             "Materials": materials,
@@ -102,11 +105,11 @@ if st.session_state.report_history:
     st.subheader("Previous Reports")
     for idx, report in enumerate(st.session_state.report_history):
         with st.expander(f"Report {idx + 1}"):
-            if "thumbnail" in report:
-                st.image(f"https://via.placeholder.com/100?text={report['thumbnail']}", caption="Thumbnail", width=75)
+            if "thumbnail_image" in report:
+                st.image(report["thumbnail_image"], caption="Thumbnail", width=75)
             for key, value in report.items():
                 if key == "images":
                     for image_name in value:
                         st.text(f"Image: {image_name}")
-                elif key != "thumbnail":
+                elif key not in ["thumbnail", "thumbnail_image"]:
                     st.markdown(f"**{key}:** {value}")
