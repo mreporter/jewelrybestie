@@ -63,7 +63,7 @@ if st.session_state.generate_report:
             "pattern with a glossy finish. The items appear to be in good vintage condition with no visible signs of significant wear."
         )
         price_min, price_max = 50, 80
-        price_range = f"${price_min:,}–${price_max:,} USD"
+        price_range = f"\${price_min:,}–\${price_max:,} USD"
 
         report_data = {
             "images": report_images,
