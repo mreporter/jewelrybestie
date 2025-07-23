@@ -5,6 +5,12 @@ import base64
 import google.generativeai as genai
 import os
 
+# Required packages for Streamlit deployment
+# Add this to requirements.txt if not already present:
+# streamlit
+# Pillow
+# google-generativeai
+
 st.set_page_config(page_title="Jewelry Bestie - AI Jewelry Identifier", layout="centered")
 st.title("\U0001F48E Jewelry Bestie")
 st.caption("Your AI powered best friend for identifying, pricing, and describing jewelry.")
