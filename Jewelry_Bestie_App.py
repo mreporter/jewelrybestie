@@ -1,6 +1,9 @@
 import streamlit as st
 from PIL import Image, ExifTags, UnidentifiedImageError
 import io
+import base64
+import google.generativeai as genai
+import os
 
 st.set_page_config(page_title="Jewelry Bestie - AI Jewelry Identifier", layout="centered")
 st.title("\U0001F48E Jewelry Bestie")
@@ -14,6 +17,10 @@ if "generate_report" not in st.session_state:
     st.session_state.generate_report = False
 if "reset" not in st.session_state:
     st.session_state.reset = False
+
+# Set your Gemini API key
+genai.configure(api_key=st.secrets["gemini_api_key"] if "gemini_api_key" in st.secrets else "your-gemini-api-key-here")
+model = genai.GenerativeModel('gemini-pro-vision')
 
 def correct_image_orientation(image):
     try:
@@ -30,6 +37,28 @@ def correct_image_orientation(image):
     except Exception:
         pass
     return image
+
+def analyze_jewelry_with_gemini(image_bytes):
+    image_parts = [
+        {
+            "mime_type": "image/jpeg",
+            "data": image_bytes
+        }
+    ]
+
+    prompt = """
+    You are an expert in vintage jewelry identification and pricing.
+    Given the following image of a jewelry item, analyze and return:
+    - Jewelry Type
+    - Materials
+    - Estimated Era or Style
+    - Detailed Description
+    - Estimated Resale Value Range in USD
+    Format clearly with labels.
+    """
+
+    response = model.generate_content([prompt, image_parts[0]])
+    return response.text
 
 if not st.session_state.generate_report:
     st.markdown("Upload up to 20 photos of your jewelry for AI powered identification results.")
@@ -48,29 +77,43 @@ if st.session_state.generate_report:
     report_images = []
     thumbnail = None
     thumbnail_image = None
-    for i, uploaded_file in enumerate(st.session_state.current_images):
+    try:
+        uploaded_file = st.session_state.current_images[0]
         image = Image.open(uploaded_file)
         image = correct_image_orientation(image)
         st.image(image, caption="Uploaded Jewelry Image", use_container_width=True)
+        image_bytes = uploaded_file.read()
         report_images.append(uploaded_file.name)
-        if i == 0:
-            thumbnail = uploaded_file.name
-            thumbnail_io = io.BytesIO()
-            image.thumbnail((75, 75))
-            image.save(thumbnail_io, format='PNG')
-            thumbnail_image = thumbnail_io.getvalue()
 
-    try:
-        jewelry_type = "Brooch and Earrings Set"
-        materials = "Enamel, metal"
-        era_style = "1960s, Mod"
-        description = (
-            "This set features a bold floral design with red, white, and blue enamel petals, "
-            "reminiscent of the 1960s mod style. The brooch and matching earrings both have a vibrant, symmetrical "
-            "pattern with a glossy finish. The items appear to be in good vintage condition with no visible signs of significant wear."
-        )
-        price_min, price_max = 50, 80
-        price_range = f"${price_min:,}–${price_max:,} USD"
+        # Create thumbnail
+        thumbnail = uploaded_file.name
+        thumbnail_io = io.BytesIO()
+        image_copy = image.copy()
+        image_copy.thumbnail((75, 75))
+        image_copy.save(thumbnail_io, format='PNG')
+        thumbnail_image = thumbnail_io.getvalue()
+
+        # Call AI
+        gemini_output = analyze_jewelry_with_gemini(image_bytes)
+
+        # Attempt to parse fields
+        price_range = ""
+        jewelry_type = materials = era_style = description = ""
+
+        for line in gemini_output.split("\n"):
+            line = line.strip()
+            if line.lower().startswith("jewelry type"):
+                jewelry_type = line.split(":", 1)[-1].strip()
+            elif line.lower().startswith("materials"):
+                materials = line.split(":", 1)[-1].strip()
+            elif line.lower().startswith("estimated era"):
+                era_style = line.split(":", 1)[-1].strip()
+            elif line.lower().startswith("detailed description"):
+                description = line.split(":", 1)[-1].strip()
+            elif line.lower().startswith("estimated resale"):
+                price_range = line.split(":", 1)[-1].strip()
+
+        price_range = price_range.replace("-", "–")
 
         report_data = {
             "thumbnail": thumbnail,
