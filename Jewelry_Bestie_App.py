@@ -8,6 +8,8 @@ import os
 try:
     import google.generativeai as genai
     from google.generativeai.types import HarmCategory, HarmBlockThreshold
+    from google.generativeai.types.content_types import Content
+    from google.generativeai import Part
 except ModuleNotFoundError:
     st.error("The Google Generative AI module is not installed. Please add 'google-generativeai' to your requirements.txt file.")
     st.stop()
@@ -62,17 +64,10 @@ def analyze_jewelry_with_gemini(image_bytes):
         Format clearly with labels.
     """
 
-    image_part = {
-        "mime_type": "image/jpeg",
-        "data": image_bytes
-    }
-
     try:
+        image_part = Part.from_image(image_bytes)
         response = model.generate_content(
-            [
-                {"text": prompt},
-                {"inline_data": image_part}
-            ],
+            [prompt, image_part],
             generation_config={
                 "temperature": 0.4,
                 "top_p": 1,
