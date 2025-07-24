@@ -8,7 +8,7 @@ import base64
 st.set_page_config(page_title="Jewelry Bestie AI", page_icon="💎", layout="centered")
 
 st.title("💎 Jewelry Bestie AI")
-st.write("Upload a photo of your jewelry and get help identifying, describing, pricing, and organizing it — just like your AI best friend would help you do!")
+st.write("Your AI-powered best friend that instantly helps you identify, describe, and price your jewelry!")
 
 uploaded_file = st.file_uploader("Upload a jewelry photo", type=["jpg", "jpeg", "png"])
 
@@ -26,14 +26,18 @@ if uploaded_file is not None:
     img_bytes = img_bytes.getvalue()
     img_base64 = base64.b64encode(img_bytes).decode("utf-8")
 
+    description_text = "- A detailed product description including material, style, and likely era." if include_description else ''
+    keywords_text = "- A list of relevant SEO keywords someone might use to search for this item online." if include_keywords else ''
+    price_text = "- A resale price suggestion based on current market trends. Display the price range in bold, like this: **$30–$150**." if include_price else ''
+
     prompt = f"""
     You are a jewelry identification expert. A user has uploaded a photo of a jewelry piece in {condition} condition. 
     Please provide the following:
-    {'- A resale price suggestion based on current market trends.' if include_price else ''}
-    {'- A detailed product description including material, style, and likely era.' if include_description else ''}
-    {'- A list of relevant SEO keywords someone might use to search for this item online.' if include_keywords else ''}
+    {description_text}
+    {keywords_text}
+    {price_text}
 
-    Use markdown formatting. Be concise, helpful, and specific.
+    Use markdown formatting. Be concise, helpful, and specific. Display the resale price section at the bottom.
     """
 
     if st.button("Analyze Jewelry"):
