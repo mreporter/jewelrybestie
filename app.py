@@ -7,7 +7,11 @@ import base64
 
 st.set_page_config(page_title="Jewelry Bestie AI", page_icon="💎", layout="centered")
 
-st.title("💎 Jewelry Bestie AI")
+col1, col2, col3 = st.columns([1, 2, 1])
+with col2:
+    st.image("bestie1.png", width=80)
+    st.title("Jewelry Bestie AI")
+
 st.write("Your AI-powered best friend that instantly helps you identify, describe, and price your jewelry!")
 
 uploaded_file = st.file_uploader("Upload a jewelry photo", type=["jpg", "jpeg", "png"])
