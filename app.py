@@ -10,7 +10,7 @@ st.set_page_config(page_title="Jewelry Bestie AI", page_icon="💎", layout="cen
 st.markdown(
     """
     <div style='text-align: center;'>
-        <img src='https://raw.githubusercontent.com/mreporter/jewelrybestie/main/bestie1.png' width='80'>
+        <img src='https://raw.githubusercontent.com/mreporter/jewelrybestie/main/bestie1.png' width='80' style='vertical-align: middle;'>
         <h1 style='display: inline-block; vertical-align: middle; margin: 0 10px;'>Jewelry Bestie AI</h1>
     </div>
     """,
