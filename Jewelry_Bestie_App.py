@@ -7,6 +7,7 @@ import os
 # Install missing dependency
 try:
     import google.generativeai as genai
+    from google.generativeai.types import HarmCategory, HarmBlockThreshold
 except ModuleNotFoundError:
     st.error("The Google Generative AI module is not installed. Please add 'google-generativeai' to your requirements.txt file.")
     st.stop()
@@ -30,12 +31,8 @@ if "gemini_api_key" not in st.secrets or st.secrets["gemini_api_key"] == "your-g
     st.stop()
 
 # Use the updated Gemini model
-try:
-    genai.configure(api_key=st.secrets["gemini_api_key"])
-    model = genai.GenerativeModel('gemini-1.5-flash')
-except Exception as e:
-    st.error(f"Failed to initialize Gemini model: {e}")
-    st.stop()
+genai.configure(api_key=st.secrets["gemini_api_key"])
+model = genai.GenerativeModel("gemini-1.5-flash")
 
 def correct_image_orientation(image):
     try:
@@ -54,8 +51,7 @@ def correct_image_orientation(image):
     return image
 
 def analyze_jewelry_with_gemini(image_bytes):
-    prompt = genai.content_types.TextPart(
-        """
+    prompt = """
         You are an expert in vintage jewelry identification and pricing.
         Given the following image of a jewelry item, analyze and return:
         - Jewelry Type
@@ -64,12 +60,36 @@ def analyze_jewelry_with_gemini(image_bytes):
         - Detailed Description
         - Estimated Resale Value Range in USD
         Format clearly with labels.
-        """
-    )
+    """
 
-    image_part = genai.content_types.ImagePart.from_bytes(image_bytes, mime_type="image/jpeg")
-    response = model.generate_content([prompt, image_part])
-    return response.text
+    image_part = {
+        "mime_type": "image/jpeg",
+        "data": image_bytes
+    }
+
+    try:
+        response = model.generate_content(
+            [
+                {"text": prompt},
+                {"inline_data": image_part}
+            ],
+            generation_config={
+                "temperature": 0.4,
+                "top_p": 1,
+                "top_k": 32,
+                "max_output_tokens": 2048
+            },
+            safety_settings={
+                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+            }
+        )
+        return response.text
+    except Exception as e:
+        st.error(f"Gemini API call failed: {e}")
+        return ""
 
 if not st.session_state.generate_report:
     st.markdown("Upload up to 20 photos of your jewelry for AI powered identification results.")
