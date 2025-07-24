@@ -4,13 +4,14 @@ import os
 from PIL import Image, ExifTags
 import io
 import base64
+from datetime import datetime
 
 st.set_page_config(page_title="Jewelry Bestie AI", page_icon="💎", layout="centered")
 
 st.markdown(
     """
     <div style='text-align: center;'>
-        <img src='https://raw.githubusercontent.com/mreporter/jewelrybestie/main/bestie1.png' width='120' style='vertical-align: middle;'>
+        <img src='https://raw.githubusercontent.com/mreporter/jewelrybestie/main/bestie1.png' width='180' style='vertical-align: middle;'>
         <h1 style='display: inline-block; vertical-align: middle; margin: 0 10px;'>Jewelry Bestie AI</h1>
     </div>
     """,
@@ -27,7 +28,7 @@ if st.session_state.clear_fields:
     st.session_state.uploaded_files = []
     st.session_state.jewelry_type = ""
     st.session_state.set_details = ""
-    st.session_state.condition = ""
+    st.session_state.condition = "Excellent"
     st.experimental_rerun()
 
 if 'uploaded_files' not in st.session_state:
@@ -60,7 +61,7 @@ if st.session_state.uploaded_files:
             pass
         cols[i % 3].image(image.resize((512, 512)), use_container_width=True)
 
-jewelry_type = st.selectbox("What type of jewelry is this?", ["Ring", "Brooch", "Bracelet", "Necklace", "Earrings", "Set"])
+jewelry_type = st.selectbox("What type of jewelry is this?", ["Ring", "Brooch", "Bracelet", "Necklace", "Earrings", "Set"], index=0)
 st.session_state.jewelry_type = jewelry_type
 
 set_details = ""
@@ -68,9 +69,9 @@ if jewelry_type == "Set":
     set_details = st.text_input("What items are included in the set? (e.g., brooch and earrings, necklace and bracelet, etc.)")
     st.session_state.set_details = set_details
     if set_details:
-        st.success("Saved")
+        st.success("Saved ✅")
 
-condition = st.selectbox("What's the condition?", ["Excellent", "Good", "Fair", "Poor"])
+condition = st.selectbox("What's the condition?", ["Excellent", "Good", "Fair", "Poor"], index=0)
 st.session_state.condition = condition
 
 if 'history' not in st.session_state:
@@ -78,6 +79,9 @@ if 'history' not in st.session_state:
 
 if 'thumbnails' not in st.session_state:
     st.session_state.thumbnails = []
+
+if 'timestamps' not in st.session_state:
+    st.session_state.timestamps = []
 
 if st.button("Generate Report"):
     if not st.session_state.uploaded_files:
@@ -146,9 +150,7 @@ if st.button("Generate Report"):
         - keyword 5
 
         ### Resale Price Suggestion
-        Based on similar items, resale prices typically range from $30 to $150, depending on the maker, condition, and rarity.
-
-        Price suggestions are based on current market estimates. For a formal appraisal, please consult with a certified jewelry expert.
+        Please include a resale price range in bold (e.g., **$30–$150**) and end with a short disclaimer.
         """
 
         with st.spinner("Analyzing your jewelry with AI magic..."):
@@ -184,6 +186,7 @@ if st.button("Generate Report"):
                 # Save report and thumbnail to session history
                 st.session_state.history.insert(0, output)
                 st.session_state.thumbnails.insert(0, thumbnail)
+                st.session_state.timestamps.insert(0, datetime.now().strftime("%b %d, %I:%M%p"))
 
                 if st.button("Start New Report"):
                     st.session_state.clear_fields = True
@@ -197,7 +200,8 @@ if st.session_state.history:
     st.markdown("---")
     st.subheader("Previous Reports")
     for i, report in enumerate(st.session_state.history):
-        with st.expander(f"Report {len(st.session_state.history) - i}"):
+        timestamp = st.session_state.timestamps[i] if i < len(st.session_state.timestamps) else f"Report {len(st.session_state.history) - i}"
+        with st.expander(f"Report {len(st.session_state.history) - i} ({timestamp})"):
             if i < len(st.session_state.thumbnails):
                 thumb_data = base64.b64decode(st.session_state.thumbnails[i])
                 st.image(Image.open(io.BytesIO(thumb_data)), caption="Thumbnail", width=100)
