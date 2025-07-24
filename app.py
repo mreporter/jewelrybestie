@@ -27,7 +27,22 @@ if uploaded_files:
     cols = st.columns(3)
     for i, uploaded_file in enumerate(uploaded_files[:6]):
         image = Image.open(uploaded_file)
-        cols[i % 3].image(image, use_column_width=True)
+        try:
+            for orientation in ExifTags.TAGS.keys():
+                if ExifTags.TAGS[orientation] == 'Orientation':
+                    break
+            exif = image._getexif()
+            if exif is not None:
+                orientation = exif.get(orientation, None)
+                if orientation == 3:
+                    image = image.rotate(180, expand=True)
+                elif orientation == 6:
+                    image = image.rotate(270, expand=True)
+                elif orientation == 8:
+                    image = image.rotate(90, expand=True)
+        except:
+            pass
+        cols[i % 3].image(image, use_container_width=True)
 
 jewelry_type = st.selectbox("What type of jewelry is this?", ["Ring", "Brooch", "Bracelet", "Necklace", "Earrings", "Set (Necklace & Earrings)"])
 
@@ -153,7 +168,7 @@ if st.session_state.history:
     st.markdown("---")
     st.subheader("Previous Reports")
     for i, report in enumerate(st.session_state.history):
-        with st.expander(f"Report {len(st.session_state.history) - i}"):
+        with st.expander(f"Report {i+1}"):
             if i < len(st.session_state.thumbnails):
                 thumb_data = base64.b64decode(st.session_state.thumbnails[i])
                 st.image(Image.open(io.BytesIO(thumb_data)), caption="Thumbnail", width=100)
