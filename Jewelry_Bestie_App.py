@@ -2,8 +2,14 @@ import streamlit as st
 from PIL import Image, ExifTags, UnidentifiedImageError
 import io
 import base64
-import google.generativeai as genai
 import os
+
+# Install missing dependency
+try:
+    import google.generativeai as genai
+except ModuleNotFoundError:
+    st.error("The Google Generative AI module is not installed. Please add 'google-generativeai' to your requirements.txt file.")
+    st.stop()
 
 # Required packages for Streamlit deployment
 # Add this to requirements.txt if not already present:
@@ -12,7 +18,7 @@ import os
 # google-generativeai
 
 st.set_page_config(page_title="Jewelry Bestie - AI Jewelry Identifier", layout="centered")
-st.title("\U0001F48E Jewelry Bestie")
+st.title(":gem: Jewelry Bestie")
 st.caption("Your AI powered best friend for identifying, pricing, and describing jewelry.")
 
 if "report_history" not in st.session_state:
@@ -25,8 +31,13 @@ if "reset" not in st.session_state:
     st.session_state.reset = False
 
 # Set your Gemini API key
-genai.configure(api_key=st.secrets["gemini_api_key"] if "gemini_api_key" in st.secrets else "your-gemini-api-key-here")
-model = genai.GenerativeModel('gemini-pro-vision')
+if "gemini_api_key" not in st.secrets or st.secrets["gemini_api_key"] == "your-gemini-api-key-here":
+    st.error("Gemini API key is missing or invalid. Please set a valid key in your Streamlit app secrets.")
+    st.stop()
+
+# Use the updated Gemini model
+genai.configure(api_key=st.secrets["gemini_api_key"])
+model = genai.GenerativeModel('models/gemini-1.5-flash')
 
 def correct_image_orientation(image):
     try:
@@ -76,7 +87,7 @@ if not st.session_state.generate_report:
     if st.button("Generate Jewelry Report"):
         st.session_state.generate_report = True
         st.session_state.reset = False
-        with st.spinner("\U0001F50D Analyzing your jewelry with AI-powered tools... Please wait."):
+        with st.spinner(":mag: Analyzing your jewelry with AI-powered tools... Please wait."):
             st.rerun()
 
 if st.session_state.generate_report:
