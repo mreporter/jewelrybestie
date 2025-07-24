@@ -42,12 +42,11 @@ if uploaded_files:
                     image = image.rotate(90, expand=True)
         except:
             pass
-        cols[i % 3].image(image, use_container_width=True)
+        cols[i % 3].image(image.resize((512, 512)), use_container_width=True)
 
 jewelry_type = st.selectbox("What type of jewelry is this?", ["Ring", "Brooch", "Bracelet", "Necklace", "Earrings", "Set"])
 
 set_details = ""
-set_saved = False
 if jewelry_type == "Set":
     set_details = st.text_input("What items are included in the set? (e.g., brooch and earrings, necklace and bracelet, etc.)")
     if set_details:
@@ -88,6 +87,7 @@ if st.button("Generate Report"):
             except:
                 pass
 
+            image = image.resize((512, 512))
             img_bytes = io.BytesIO()
             image.save(img_bytes, format='PNG')
             img_bytes = img_bytes.getvalue()
