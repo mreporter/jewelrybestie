@@ -76,9 +76,9 @@ if uploaded_file is not None:
     - keyword 5
 
     ### Resale Price Suggestion
-    Based on similar items, resale prices typically range from `$30 to $150`, depending on the maker, condition, and rarity.
+    Based on similar items, resale prices typically range from $30 to $150, depending on the maker, condition, and rarity.
 
-    For a formal appraisal, it is recommended to consult a jewelry expert.
+    Price suggestions are based on current market estimates. For a formal appraisal, please consult with a certified jewelry expert.
     """
 
     with st.spinner("Analyzing your jewelry..."):
