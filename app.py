@@ -19,99 +19,115 @@ st.markdown(
 
 st.write("Your AI-powered best friend that instantly helps you identify, describe, and price your jewelry!")
 
-uploaded_file = st.file_uploader("Upload a jewelry photo", type=["jpg", "jpeg", "png"])
+uploaded_files = st.file_uploader("Upload up to 20 jewelry photos", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
+
+jewelry_type = st.selectbox("What type of jewelry is this?", ["Ring", "Brooch", "Bracelet", "Necklace", "Earrings", "Set (Necklace & Earrings)"])
 
 condition = st.selectbox("What's the condition?", ["Excellent", "Good", "Fair", "Poor"])
 
-if uploaded_file is not None:
-    image = Image.open(uploaded_file)
+if 'history' not in st.session_state:
+    st.session_state.history = []
 
-    try:
-        for orientation in ExifTags.TAGS.keys():
-            if ExifTags.TAGS[orientation] == 'Orientation':
-                break
-        exif = image._getexif()
-        if exif is not None:
-            orientation = exif.get(orientation, None)
-            if orientation == 3:
-                image = image.rotate(180, expand=True)
-            elif orientation == 6:
-                image = image.rotate(270, expand=True)
-            elif orientation == 8:
-                image = image.rotate(90, expand=True)
-    except:
-        pass
+if st.button("Generate Report") and uploaded_files:
+    for uploaded_file in uploaded_files:
+        image = Image.open(uploaded_file)
 
-    st.image(image, caption="Uploaded Jewelry Image", use_container_width=True)
-
-    img_bytes = io.BytesIO()
-    image.save(img_bytes, format='PNG')
-    img_bytes = img_bytes.getvalue()
-    img_base64 = base64.b64encode(img_bytes).decode("utf-8")
-
-    prompt = f"""
-    You are a jewelry identification expert. A user has uploaded a photo of a jewelry piece in {condition} condition. 
-    Please provide the following information in clearly formatted markdown:
-
-    ### Product Description
-
-    **Title:** [Generate a compelling title that describes the piece]
-
-    **Description:** [Detailed paragraph about the item, including what it is, its use, its style, likely era, and visible condition. Mention typical use cases or occasions.]
-
-    **Materials:**
-    - [Material 1]
-    - [Material 2]
-
-    **Style/Era:**
-    - [Style 1]
-    - [Style 2]
-    - [Era if known]
-
-    ### SEO Keywords
-    - keyword 1
-    - keyword 2
-    - keyword 3
-    - keyword 4
-    - keyword 5
-
-    ### Resale Price Suggestion
-    Based on similar items, resale prices typically range from **\$30 to \$150**, depending on the maker, condition, and rarity.
-
-    Price suggestions are based on current market estimates. For a formal appraisal, please consult with a certified jewelry expert.
-    """
-
-    with st.spinner("Analyzing your jewelry with AI magic..."):
         try:
-            openai.api_key = st.secrets["OPENAI_API_KEY"]
+            for orientation in ExifTags.TAGS.keys():
+                if ExifTags.TAGS[orientation] == 'Orientation':
+                    break
+            exif = image._getexif()
+            if exif is not None:
+                orientation = exif.get(orientation, None)
+                if orientation == 3:
+                    image = image.rotate(180, expand=True)
+                elif orientation == 6:
+                    image = image.rotate(270, expand=True)
+                elif orientation == 8:
+                    image = image.rotate(90, expand=True)
+        except:
+            pass
 
-            response = openai.chat.completions.create(
-                model="gpt-4o",
-                messages=[
-                    {
-                        "role": "system",
-                        "content": "You are an expert in jewelry appraisal and description."
-                    },
-                    {
-                        "role": "user",
-                        "content": [
-                            {
-                                "type": "text",
-                                "text": prompt
-                            },
-                            {
-                                "type": "image_url",
-                                "image_url": {
-                                    "url": f"data:image/png;base64,{img_base64}"
+        img_bytes = io.BytesIO()
+        image.save(img_bytes, format='PNG')
+        img_bytes = img_bytes.getvalue()
+        img_base64 = base64.b64encode(img_bytes).decode("utf-8")
+
+        prompt = f"""
+        You are a jewelry identification expert. A user has uploaded a photo of a jewelry piece in {condition} condition. The type of jewelry is a {jewelry_type}.
+        Please provide the following information in clearly formatted markdown:
+
+        ### Product Description
+
+        **Title:** [Generate a compelling title that describes the piece]
+
+        **Description:** [Detailed paragraph about the item, including what it is, its use, its style, likely era, and visible condition. Mention typical use cases or occasions.]
+
+        **Materials:**
+        - [Material 1]
+        - [Material 2]
+
+        **Style/Era:**
+        - [Style 1]
+        - [Style 2]
+        - [Era if known]
+
+        ### SEO Keywords
+        - keyword 1
+        - keyword 2
+        - keyword 3
+        - keyword 4
+        - keyword 5
+
+        ### Resale Price Suggestion
+        Based on similar items, resale prices typically range from $30 to $150, depending on the maker, condition, and rarity.
+
+        Price suggestions are based on current market estimates. For a formal appraisal, please consult with a certified jewelry expert.
+        """
+
+        with st.spinner("Analyzing your jewelry with AI magic..."):
+            try:
+                openai.api_key = st.secrets["OPENAI_API_KEY"]
+
+                response = openai.chat.completions.create(
+                    model="gpt-4o",
+                    messages=[
+                        {
+                            "role": "system",
+                            "content": "You are an expert in jewelry appraisal and description."
+                        },
+                        {
+                            "role": "user",
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": prompt
+                                },
+                                {
+                                    "type": "image_url",
+                                    "image_url": {
+                                        "url": f"data:image/png;base64,{img_base64}"
+                                    }
                                 }
-                            }
-                        ]
-                    }
-                ]
-            )
+                            ]
+                        }
+                    ]
+                )
 
-            output = response.choices[0].message.content
-            st.markdown(output)
+                output = response.choices[0].message.content
+                st.image(image, caption="Uploaded Jewelry Image", use_container_width=True)
+                st.markdown(output)
 
-        except Exception as e:
-            st.error(f"Something went wrong: {e}")
+                # Save report to session history
+                st.session_state.history.insert(0, output)
+
+            except Exception as e:
+                st.error(f"Something went wrong: {e}")
+
+# Display report history
+if st.session_state.history:
+    st.markdown("---")
+    st.subheader("Previous Reports")
+    for i, report in enumerate(st.session_state.history):
+        with st.expander(f"Report {i + 1}"):
+            st.markdown(report)
