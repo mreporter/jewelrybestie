@@ -47,8 +47,11 @@ if uploaded_files:
 jewelry_type = st.selectbox("What type of jewelry is this?", ["Ring", "Brooch", "Bracelet", "Necklace", "Earrings", "Set"])
 
 set_details = ""
+set_saved = False
 if jewelry_type == "Set":
     set_details = st.text_input("What items are included in the set? (e.g., brooch and earrings, necklace and bracelet, etc.)")
+    if set_details:
+        st.success("Saved")
 
 condition = st.selectbox("What's the condition?", ["Excellent", "Good", "Fair", "Poor"])
 
@@ -59,7 +62,11 @@ if 'thumbnails' not in st.session_state:
     st.session_state.thumbnails = []
 
 if st.button("Generate Report"):
-    if uploaded_files:
+    if not uploaded_files:
+        st.error("Please upload at least one photo.")
+    elif jewelry_type == "Set" and not set_details.strip():
+        st.error("Please describe the items included in the set.")
+    else:
         images_base64 = []
         thumbnail = None
         for i, uploaded_file in enumerate(uploaded_files):
@@ -92,17 +99,17 @@ if st.button("Generate Report"):
 
         jewelry_type_full = jewelry_type
         if jewelry_type == "Set" and set_details:
-            jewelry_type_full = f"Set ({set_details})"
+            jewelry_type_full = f"Set including {set_details.strip()}"
 
         prompt = f"""
-        You are a jewelry identification expert. A user has uploaded multiple photos of a jewelry piece in {condition} condition. The type of jewelry is a {jewelry_type_full}.
-        Please provide the following information in clearly formatted markdown:
+        You are a jewelry identification expert. A user has uploaded multiple photos of a jewelry piece in {condition} condition. 
+        The type of jewelry is a **{jewelry_type_full}**. Please interpret the description and structure below precisely.
 
         ### Product Description
 
-        **Title:** [Generate a compelling title that describes the piece]
+        **Title:** [Generate a compelling title that accurately matches the piece type and style.]
 
-        **Description:** [Detailed paragraph about the item, including what it is, its use, its style, likely era, and visible condition. Mention typical use cases or occasions.]
+        **Description:** [Write a detailed paragraph explaining what the item is, what pieces are included, its style, likely era, and visible condition. Mention any typical use cases or styling ideas.]
 
         **Materials:**
         - [Material 1]
@@ -111,7 +118,7 @@ if st.button("Generate Report"):
         **Style/Era:**
         - [Style 1]
         - [Style 2]
-        - [Era if known]
+        - [Era, if apparent]
 
         ### SEO Keywords
         - keyword 1
@@ -131,10 +138,7 @@ if st.button("Generate Report"):
                 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
                 content = [
-                    {
-                        "type": "text",
-                        "text": prompt
-                    }
+                    {"type": "text", "text": prompt}
                 ]
 
                 for img_base64 in images_base64:
@@ -148,14 +152,8 @@ if st.button("Generate Report"):
                 response = openai.chat.completions.create(
                     model="gpt-4o",
                     messages=[
-                        {
-                            "role": "system",
-                            "content": "You are an expert in jewelry appraisal and description."
-                        },
-                        {
-                            "role": "user",
-                            "content": content
-                        }
+                        {"role": "system", "content": "You are an expert in jewelry appraisal and description."},
+                        {"role": "user", "content": content}
                     ]
                 )
 
