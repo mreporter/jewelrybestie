@@ -11,12 +11,6 @@ except ModuleNotFoundError:
     st.error("The Google Generative AI module is not installed. Please add 'google-generativeai' to your requirements.txt file.")
     st.stop()
 
-# Required packages for Streamlit deployment
-# Add this to requirements.txt if not already present:
-# streamlit
-# Pillow
-# google-generativeai
-
 st.set_page_config(page_title="Jewelry Bestie - AI Jewelry Identifier", layout="centered")
 st.title(":gem: Jewelry Bestie")
 st.caption("Your AI powered best friend for identifying, pricing, and describing jewelry.")
@@ -36,8 +30,12 @@ if "gemini_api_key" not in st.secrets or st.secrets["gemini_api_key"] == "your-g
     st.stop()
 
 # Use the updated Gemini model
-genai.configure(api_key=st.secrets["gemini_api_key"])
-model = genai.GenerativeModel('models/gemini-1.5-flash')
+try:
+    genai.configure(api_key=st.secrets["gemini_api_key"])
+    model = genai.GenerativeModel('gemini-1.5-flash')
+except Exception as e:
+    st.error(f"Failed to initialize Gemini model: {e}")
+    st.stop()
 
 def correct_image_orientation(image):
     try:
@@ -56,25 +54,21 @@ def correct_image_orientation(image):
     return image
 
 def analyze_jewelry_with_gemini(image_bytes):
-    image_parts = [
-        {
-            "mime_type": "image/jpeg",
-            "data": image_bytes
-        }
-    ]
+    prompt = genai.content_types.TextPart(
+        """
+        You are an expert in vintage jewelry identification and pricing.
+        Given the following image of a jewelry item, analyze and return:
+        - Jewelry Type
+        - Materials
+        - Estimated Era or Style
+        - Detailed Description
+        - Estimated Resale Value Range in USD
+        Format clearly with labels.
+        """
+    )
 
-    prompt = """
-    You are an expert in vintage jewelry identification and pricing.
-    Given the following image of a jewelry item, analyze and return:
-    - Jewelry Type
-    - Materials
-    - Estimated Era or Style
-    - Detailed Description
-    - Estimated Resale Value Range in USD
-    Format clearly with labels.
-    """
-
-    response = model.generate_content([prompt, image_parts[0]])
+    image_part = genai.content_types.ImagePart.from_bytes(image_bytes, mime_type="image/jpeg")
+    response = model.generate_content([prompt, image_part])
     return response.text
 
 if not st.session_state.generate_report:
@@ -99,7 +93,7 @@ if st.session_state.generate_report:
         image = Image.open(uploaded_file)
         image = correct_image_orientation(image)
         st.image(image, caption="Uploaded Jewelry Image", use_container_width=True)
-        image_bytes = uploaded_file.read()
+        image_bytes = uploaded_file.getvalue()
         report_images.append(uploaded_file.name)
 
         # Create thumbnail
