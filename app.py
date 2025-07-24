@@ -187,9 +187,7 @@ if st.button("Generate Report"):
                 st.session_state.timestamps.insert(0, datetime.now().strftime("%b %d, %I:%M%p"))
 
                 if st.button("Start New Report"):
-                    for key in ["uploaded_files", "jewelry_type", "set_details", "condition"]:
-                        if key in st.session_state:
-                            del st.session_state[key]
+                    st.session_state.clear_fields = True
                     st.experimental_rerun()
 
             except Exception as e:
