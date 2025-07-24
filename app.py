@@ -10,7 +10,7 @@ st.set_page_config(page_title="Jewelry Bestie AI", page_icon="💎", layout="cen
 st.markdown(
     """
     <div style='text-align: center;'>
-        <img src='https://raw.githubusercontent.com/mreporter/jewelrybestie/main/bestie1.png' width='80' style='vertical-align: middle;'>
+        <img src='https://raw.githubusercontent.com/mreporter/jewelrybestie/main/bestie1.png' width='120' style='vertical-align: middle;'>
         <h1 style='display: inline-block; vertical-align: middle; margin: 0 10px;'>Jewelry Bestie AI</h1>
     </div>
     """,
@@ -18,6 +18,13 @@ st.markdown(
 )
 
 st.write("Your AI-powered best friend that instantly helps you identify, describe, and price your jewelry!")
+
+if 'clear_fields' not in st.session_state:
+    st.session_state.clear_fields = False
+
+if st.session_state.clear_fields:
+    st.session_state.clear_fields = False
+    st.experimental_rerun()
 
 uploaded_files = st.file_uploader("Upload up to 20 jewelry photos", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
 
@@ -166,6 +173,10 @@ if st.button("Generate Report"):
                 # Save report and thumbnail to session history
                 st.session_state.history.insert(0, output)
                 st.session_state.thumbnails.insert(0, thumbnail)
+
+                if st.button("Start New Report"):
+                    st.session_state.clear_fields = True
+                    st.experimental_rerun()
 
             except Exception as e:
                 st.error(f"Something went wrong: {e}")
