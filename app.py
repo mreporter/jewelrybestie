@@ -19,7 +19,7 @@ include_keywords = st.checkbox("Include SEO keywords", value=True)
 
 if uploaded_file is not None:
     image = Image.open(uploaded_file)
-    st.image(image, caption="Uploaded Jewelry Image", use_column_width=True)
+    st.image(image, caption="Uploaded Jewelry Image", use_container_width=True)
 
     img_bytes = io.BytesIO()
     image.save(img_bytes, format='PNG')
@@ -44,8 +44,25 @@ if uploaded_file is not None:
                 response = openai.chat.completions.create(
                     model="gpt-4o",
                     messages=[
-                        {"role": "system", "content": "You are an expert in jewelry appraisal and description."},
-                        {"role": "user", "content": prompt}
+                        {
+                            "role": "system",
+                            "content": "You are an expert in jewelry appraisal and description."
+                        },
+                        {
+                            "role": "user",
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": prompt
+                                },
+                                {
+                                    "type": "image_url",
+                                    "image_url": {
+                                        "url": f"data:image/png;base64,{img_base64}"
+                                    }
+                                }
+                            ]
+                        }
                     ]
                 )
 
