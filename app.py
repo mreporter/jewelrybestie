@@ -24,15 +24,24 @@ if 'clear_fields' not in st.session_state:
 
 if st.session_state.clear_fields:
     st.session_state.clear_fields = False
+    st.session_state.uploaded_files = []
+    st.session_state.jewelry_type = ""
+    st.session_state.set_details = ""
+    st.session_state.condition = ""
     st.experimental_rerun()
 
+if 'uploaded_files' not in st.session_state:
+    st.session_state.uploaded_files = []
+
 uploaded_files = st.file_uploader("Upload up to 20 jewelry photos", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
+if uploaded_files:
+    st.session_state.uploaded_files = uploaded_files
 
 # Show first 6 uploaded images
-if uploaded_files:
+if st.session_state.uploaded_files:
     st.markdown("### Uploaded Photos (up to 6 shown)")
     cols = st.columns(3)
-    for i, uploaded_file in enumerate(uploaded_files[:6]):
+    for i, uploaded_file in enumerate(st.session_state.uploaded_files[:6]):
         image = Image.open(uploaded_file)
         try:
             for orientation in ExifTags.TAGS.keys():
@@ -52,14 +61,17 @@ if uploaded_files:
         cols[i % 3].image(image.resize((512, 512)), use_container_width=True)
 
 jewelry_type = st.selectbox("What type of jewelry is this?", ["Ring", "Brooch", "Bracelet", "Necklace", "Earrings", "Set"])
+st.session_state.jewelry_type = jewelry_type
 
 set_details = ""
 if jewelry_type == "Set":
     set_details = st.text_input("What items are included in the set? (e.g., brooch and earrings, necklace and bracelet, etc.)")
+    st.session_state.set_details = set_details
     if set_details:
         st.success("Saved")
 
 condition = st.selectbox("What's the condition?", ["Excellent", "Good", "Fair", "Poor"])
+st.session_state.condition = condition
 
 if 'history' not in st.session_state:
     st.session_state.history = []
@@ -68,16 +80,15 @@ if 'thumbnails' not in st.session_state:
     st.session_state.thumbnails = []
 
 if st.button("Generate Report"):
-    if not uploaded_files:
+    if not st.session_state.uploaded_files:
         st.error("Please upload at least one photo.")
     elif jewelry_type == "Set" and not set_details.strip():
         st.error("Please describe the items included in the set.")
     else:
         images_base64 = []
         thumbnail = None
-        for i, uploaded_file in enumerate(uploaded_files):
+        for i, uploaded_file in enumerate(st.session_state.uploaded_files):
             image = Image.open(uploaded_file)
-
             try:
                 for orientation in ExifTags.TAGS.keys():
                     if ExifTags.TAGS[orientation] == 'Orientation':
