@@ -7,10 +7,15 @@ import base64
 
 st.set_page_config(page_title="Jewelry Bestie AI", page_icon="💎", layout="centered")
 
-col1, col2, col3 = st.columns([1, 2, 1])
-with col2:
-    st.image("bestie1.png", width=80)
-    st.title("Jewelry Bestie AI")
+st.markdown(
+    """
+    <div style='text-align: center;'>
+        <img src='https://raw.githubusercontent.com/mreporter/jewelrybestie/main/bestie1.png' width='80'>
+        <h1 style='display: inline-block; vertical-align: middle; margin: 0 10px;'>Jewelry Bestie AI</h1>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 st.write("Your AI-powered best friend that instantly helps you identify, describe, and price your jewelry!")
 
