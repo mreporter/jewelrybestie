@@ -14,6 +14,9 @@ st.markdown(
         <img src='https://raw.githubusercontent.com/mreporter/jewelrybestie/main/bestie1.png' width='200' style='vertical-align: middle;'>
         <h1 style='display: inline-block; vertical-align: middle; margin: 0 10px;'>Jewelry Bestie AI</h1>
     </div>
+    <script>
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    </script>
     """,
     unsafe_allow_html=True
 )
@@ -41,7 +44,7 @@ uploaded_files = st.file_uploader("Upload up to 20 jewelry photos", type=["jpg",
 if uploaded_files:
     st.session_state.uploaded_files = uploaded_files
 
-if st.session_state.uploaded_files:
+if st.session_state.get('uploaded_files'):
     st.markdown("### Uploaded Photos (up to 6 shown)")
     cols = st.columns(3)
     for i, uploaded_file in enumerate(st.session_state.uploaded_files[:6]):
@@ -63,22 +66,22 @@ if st.session_state.uploaded_files:
             pass
         cols[i % 3].image(image.resize((512, 512)), use_container_width=True)
 
-jewelry_type = st.selectbox("What type of jewelry is this?", ["Ring", "Brooch", "Bracelet", "Necklace", "Earrings", "Set"], index=["Ring", "Brooch", "Bracelet", "Necklace", "Earrings", "Set"].index(st.session_state.jewelry_type))
+jewelry_type = st.selectbox("What type of jewelry is this?", ["Ring", "Brooch", "Bracelet", "Necklace", "Earrings", "Set"], index=["Ring", "Brooch", "Bracelet", "Necklace", "Earrings", "Set"].index(st.session_state.get('jewelry_type', 'Ring')))
 st.session_state.jewelry_type = jewelry_type
 
 if jewelry_type == "Set":
-    set_details = st.text_input("What items are included in the set? (e.g., brooch and earrings, necklace and bracelet, etc.)", value=st.session_state.set_details)
+    set_details = st.text_input("What items are included in the set? (e.g., brooch and earrings, necklace and bracelet, etc.)", value=st.session_state.get('set_details', ''))
     st.session_state.set_details = set_details
     if set_details:
         st.success("Saved ✅")
 
-condition = st.selectbox("What's the condition?", ["Excellent", "Good", "Fair", "Poor"], index=["Excellent", "Good", "Fair", "Poor"].index(st.session_state.condition))
+condition = st.selectbox("What's the condition?", ["Excellent", "Good", "Fair", "Poor"], index=["Excellent", "Good", "Fair", "Poor"].index(st.session_state.get('condition', 'Excellent')))
 st.session_state.condition = condition
 
 generate_clicked = st.button("Generate Report")
 
 if generate_clicked:
-    if not st.session_state.uploaded_files:
+    if not st.session_state.get('uploaded_files'):
         st.error("Please upload at least one photo.")
     elif jewelry_type == "Set" and not st.session_state.set_details.strip():
         st.error("Please describe the items included in the set.")
@@ -192,7 +195,13 @@ if st.session_state.report_generated:
         st.session_state.set_details = ""
         st.session_state.condition = "Excellent"
         st.session_state.report_generated = False
-        st.experimental_rerun()
+        st.experimental_set_query_params(start_over="true")
+        st.markdown("""
+        <script>
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        location.reload();
+        </script>
+        """, unsafe_allow_html=True)
 
 if st.session_state.history:
     st.markdown("---")
