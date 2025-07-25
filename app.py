@@ -11,7 +11,7 @@ st.set_page_config(page_title="Jewelry Bestie AI", page_icon="💎", layout="cen
 st.markdown(
     """
     <div style='text-align: center;'>
-        <img src='https://raw.githubusercontent.com/mreporter/jewelrybestie/main/bestie1.png' width='200' style='vertical-align: middle;'>
+        <img src='https://raw.githubusercontent.com/mreporter/jewelrybestie/main/bestie1.png' width='250' style='vertical-align: middle;'>
         <h1 style='display: inline-block; vertical-align: middle; margin: 0 10px;'>Jewelry Bestie AI</h1>
     </div>
     """,
@@ -20,19 +20,28 @@ st.markdown(
 
 st.write("Your AI-powered best friend that instantly helps you identify, describe, and price your jewelry!")
 
-if 'clear_fields' not in st.session_state:
-    st.session_state.clear_fields = False
-
-if st.session_state.clear_fields:
-    st.session_state.clear_fields = False
+if 'uploaded_files' not in st.session_state:
     st.session_state.uploaded_files = []
-    st.session_state.jewelry_type = ""
+if 'jewelry_type' not in st.session_state:
+    st.session_state.jewelry_type = "Ring"
+if 'set_details' not in st.session_state:
+    st.session_state.set_details = ""
+if 'condition' not in st.session_state:
+    st.session_state.condition = "Excellent"
+if 'history' not in st.session_state:
+    st.session_state.history = []
+if 'thumbnails' not in st.session_state:
+    st.session_state.thumbnails = []
+if 'timestamps' not in st.session_state:
+    st.session_state.timestamps = []
+
+# Button to start a new report
+if st.button("Start New Report"):
+    st.session_state.uploaded_files = []
+    st.session_state.jewelry_type = "Ring"
     st.session_state.set_details = ""
     st.session_state.condition = "Excellent"
     st.experimental_rerun()
-
-if 'uploaded_files' not in st.session_state:
-    st.session_state.uploaded_files = []
 
 uploaded_files = st.file_uploader("Upload up to 20 jewelry photos", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
 if uploaded_files:
@@ -60,32 +69,22 @@ if st.session_state.uploaded_files:
             pass
         cols[i % 3].image(image.resize((512, 512)), use_container_width=True)
 
-jewelry_type = st.selectbox("What type of jewelry is this?", ["Ring", "Brooch", "Bracelet", "Necklace", "Earrings", "Set"], index=0)
+jewelry_type = st.selectbox("What type of jewelry is this?", ["Ring", "Brooch", "Bracelet", "Necklace", "Earrings", "Set"], index=["Ring", "Brooch", "Bracelet", "Necklace", "Earrings", "Set"].index(st.session_state.jewelry_type))
 st.session_state.jewelry_type = jewelry_type
 
-set_details = ""
 if jewelry_type == "Set":
-    set_details = st.text_input("What items are included in the set? (e.g., brooch and earrings, necklace and bracelet, etc.)")
+    set_details = st.text_input("What items are included in the set? (e.g., brooch and earrings, necklace and bracelet, etc.)", value=st.session_state.set_details)
     st.session_state.set_details = set_details
     if set_details:
         st.success("Saved ✅")
 
-condition = st.selectbox("What's the condition?", ["Excellent", "Good", "Fair", "Poor"], index=0)
+condition = st.selectbox("What's the condition?", ["Excellent", "Good", "Fair", "Poor"], index=["Excellent", "Good", "Fair", "Poor"].index(st.session_state.condition))
 st.session_state.condition = condition
-
-if 'history' not in st.session_state:
-    st.session_state.history = []
-
-if 'thumbnails' not in st.session_state:
-    st.session_state.thumbnails = []
-
-if 'timestamps' not in st.session_state:
-    st.session_state.timestamps = []
 
 if st.button("Generate Report"):
     if not st.session_state.uploaded_files:
         st.error("Please upload at least one photo.")
-    elif jewelry_type == "Set" and not set_details.strip():
+    elif jewelry_type == "Set" and not st.session_state.set_details.strip():
         st.error("Please describe the items included in the set.")
     else:
         images_base64 = []
@@ -119,11 +118,11 @@ if st.button("Generate Report"):
                 thumbnail = img_base64
 
         jewelry_type_full = jewelry_type
-        if jewelry_type == "Set" and set_details:
-            jewelry_type_full = f"Set including {set_details.strip()}"
+        if jewelry_type == "Set" and st.session_state.set_details:
+            jewelry_type_full = f"Set including {st.session_state.set_details.strip()}"
 
         prompt = f"""
-        You are a jewelry identification expert. A user has uploaded multiple photos of a jewelry piece in {condition} condition. 
+        You are a jewelry identification expert. A user has uploaded multiple photos of a jewelry piece in {st.session_state.condition} condition. 
         The type of jewelry is a **{jewelry_type_full}**. Please interpret the description and structure below precisely.
 
         ### Product Description
@@ -185,10 +184,6 @@ if st.button("Generate Report"):
                 st.session_state.history.insert(0, output)
                 st.session_state.thumbnails.insert(0, thumbnail)
                 st.session_state.timestamps.insert(0, datetime.now().strftime("%b %d, %I:%M%p"))
-
-                if st.button("Start New Report"):
-                    st.session_state.clear_fields = True
-                    st.experimental_rerun()
 
             except Exception as e:
                 st.error(f"Something went wrong: {e}")
