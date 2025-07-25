@@ -11,7 +11,7 @@ st.set_page_config(page_title="Jewelry Bestie AI", page_icon="💎", layout="cen
 st.markdown(
     """
     <div style='text-align: center;'>
-        <img src='https://raw.githubusercontent.com/mreporter/jewelrybestie/main/bestie1.png' width='300' style='vertical-align: middle;'>
+        <img src='https://raw.githubusercontent.com/mreporter/jewelrybestie/main/bestie1.png' width='350' style='vertical-align: middle;'>
         <h1 style='display: inline-block; vertical-align: middle; margin: 0 10px;'>Jewelry Bestie AI</h1>
     </div>
     """,
@@ -36,15 +36,6 @@ if 'timestamps' not in st.session_state:
     st.session_state.timestamps = []
 if 'report_generated' not in st.session_state:
     st.session_state.report_generated = False
-
-if st.session_state.report_generated:
-    if st.button("Start New Report"):
-        st.session_state.uploaded_files = []
-        st.session_state.jewelry_type = "Ring"
-        st.session_state.set_details = ""
-        st.session_state.condition = "Excellent"
-        st.session_state.report_generated = False
-        st.experimental_rerun()
 
 uploaded_files = st.file_uploader("Upload up to 20 jewelry photos", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
 if uploaded_files:
@@ -84,7 +75,9 @@ if jewelry_type == "Set":
 condition = st.selectbox("What's the condition?", ["Excellent", "Good", "Fair", "Poor"], index=["Excellent", "Good", "Fair", "Poor"].index(st.session_state.condition))
 st.session_state.condition = condition
 
-if st.button("Generate Report"):
+generate_clicked = st.button("Generate Report")
+
+if generate_clicked:
     if not st.session_state.uploaded_files:
         st.error("Please upload at least one photo.")
     elif jewelry_type == "Set" and not st.session_state.set_details.strip():
@@ -188,6 +181,14 @@ if st.button("Generate Report"):
                 st.session_state.thumbnails.insert(0, thumbnail)
                 st.session_state.timestamps.insert(0, datetime.now().strftime("%b %d, %I:%M%p"))
                 st.session_state.report_generated = True
+
+                if st.button("Start New Report"):
+                    st.session_state.uploaded_files = []
+                    st.session_state.jewelry_type = "Ring"
+                    st.session_state.set_details = ""
+                    st.session_state.condition = "Excellent"
+                    st.session_state.report_generated = False
+                    st.experimental_rerun()
 
             except Exception as e:
                 st.error(f"Something went wrong: {e}")
